@@ -26,16 +26,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Main conversation list — entered after authentication -->
+        <!-- Main unified ChatGPT-style interface -->
         <activity
             android:name=".ui.MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Forge" />
-
-        <!-- FORGE Chat screen — one per conversation -->
-        <activity
-            android:name=".ui.chat.ChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Forge" />

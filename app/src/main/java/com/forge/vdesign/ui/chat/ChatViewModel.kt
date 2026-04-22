@@ -93,23 +93,37 @@ class ChatViewModel @Inject constructor(
         if (user == null) {
             _uiState.value = _uiState.value.copy(isSignedOut = true)
         } else {
-            val conversationId = savedStateHandle.get<String>(KEY_CONVERSATION_ID)
+            val displayName = user.displayName ?: user.email ?: "Designer"
+            _uiState.value = _uiState.value.copy(userDisplayName = displayName)
+            
+            // Try to load an existing intent ID if launched that way, else start fresh
+            val initialId = savedStateHandle.get<String>(KEY_CONVERSATION_ID)
                 ?: savedStateHandle.get<String>("conversationId")
-
-            if (conversationId.isNullOrBlank()) {
-                android.util.Log.e("ChatViewModel", "No conversationId. Keys: ${savedStateHandle.keys()}")
-                _uiState.value = _uiState.value.copy(
-                    error = "Failed to open chat session. Please go back and try again."
-                )
-            } else {
-                val displayName = user.displayName ?: user.email ?: "Designer"
-                _uiState.value = _uiState.value.copy(
-                    conversationId  = conversationId,
-                    userDisplayName = displayName
-                )
-                initConversation(conversationId)
-            }
+            
+            switchConversation(initialId)
         }
+    }
+
+    /**
+     * Swaps the active conversation context. If id is null, it spins up a fresh chat.
+     */
+    fun switchConversation(id: String?) {
+        val newId = id ?: java.util.UUID.randomUUID().toString()
+        _uiState.value = _uiState.value.copy(
+            conversationId = newId,
+            conversationTitle = "New Chat",
+            persistedMessages = emptyList(),
+            streamingContent = "",
+            isStreaming = false,
+            isSending = false,
+            thinkingContent = null,
+            statusLine = null,
+            error = null
+        )
+        agentHistory.clear()
+        messageObserverJob?.cancel()
+        
+        initConversation(newId)
     }
 
     private fun initConversation(conversationId: String) {
