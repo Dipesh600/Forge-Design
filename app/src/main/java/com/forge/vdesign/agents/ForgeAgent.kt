@@ -281,7 +281,7 @@ Speak naturally. Be specific. Don't be generic."""
                                         htmlUrl      = screen.htmlUrl,
                                         projectId    = projectId
                                     ))
-                                    "Screen generated. screenshotUrl=${screen.screenshotUrl ?: "pending"}. screenId=${screen.screenId ?: "unknown"}"
+                                    "SUCCESS. Screen is now visibly displayed to the user. (Screen ID: ${screen.screenId})"
                                 }
                                 is McpResult.Error -> {
                                     emit(AgentEvent.StatusLine("⚠ $screenName failed: ${result.message.take(60)}"))
@@ -316,7 +316,7 @@ Speak naturally. Be specific. Don't be generic."""
                                         htmlUrl       = screen.htmlUrl,
                                         projectId     = projectId
                                     ))
-                                    "Screen revised. screenshotUrl=${screen.screenshotUrl ?: "pending"}"
+                                    "SUCCESS. The revised screen is now successfully rendered in the UI for the user."
                                 }
                                 is McpResult.Error -> {
                                     emit(AgentEvent.StatusLine("⚠ Revision failed: ${result.message.take(60)}"))
