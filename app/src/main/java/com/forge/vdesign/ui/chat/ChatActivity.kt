@@ -104,6 +104,24 @@ class ChatActivity : AppCompatActivity() {
                     putExtra(ScreenCanvasActivity.EXTRA_PROMPT, prompt)
                 }
                 startActivity(intent)
+            },
+            onCopyMessage = { text ->
+                val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                val clip = android.content.ClipData.newPlainText("FORGE Response", text)
+                clipboard.setPrimaryClip(clip)
+                android.widget.Toast.makeText(this, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+            },
+            onRetryMessage = { aiMsg ->
+                val allMsgs = viewModel.uiState.value.persistedMessages
+                val idx = allMsgs.indexOfFirst { it.id == aiMsg.id }
+                if (idx > 0) {
+                    val fallbackMsg = allMsgs.subList(0, idx).lastOrNull { it.role == MessageRole.USER }
+                    if (fallbackMsg != null) {
+                        viewModel.sendMessage(fallbackMsg.content)
+                        return@ChatAdapter
+                    }
+                }
+                android.widget.Toast.makeText(this, "No previous prompt to retry.", android.widget.Toast.LENGTH_SHORT).show()
             }
         )
 

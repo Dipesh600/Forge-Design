@@ -41,7 +41,9 @@ import io.noties.markwon.image.glide.GlideImagesPlugin
  * raw syntax like "**bold**" or "### heading".
  */
 class ChatAdapter(
-    private val onOpenCanvas: (brief: DesignBrief, prompt: String) -> Unit = { _, _ -> }
+    private val onOpenCanvas: (brief: DesignBrief, prompt: String) -> Unit = { _, _ -> },
+    private val onCopyMessage: (String) -> Unit = {},
+    private val onRetryMessage: (ChatMessage) -> Unit = {}
 ) : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 
     // Built once per adapter instance — Markwon is thread-safe for reads.
@@ -99,7 +101,9 @@ class ChatAdapter(
             VIEW_TYPE_THINKING       -> ThinkingViewHolder(inflater.inflate(R.layout.item_message_thinking, parent, false))
             else                     -> AiViewHolder(
                 inflater.inflate(R.layout.item_message_ai, parent, false),
-                ::getOrCreateMarkwon
+                ::getOrCreateMarkwon,
+                onCopyMessage,
+                onRetryMessage
             )
         }
     }
@@ -125,21 +129,35 @@ class ChatAdapter(
 
     class AiViewHolder(
         itemView: View,
-        private val markwonProvider: (Context) -> Markwon
+        private val markwonProvider: (Context) -> Markwon,
+        private val onCopyMessage: (String) -> Unit,
+        private val onRetryMessage: (ChatMessage) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
         private val cursorView: TextView? = itemView.findViewById(R.id.tvStreamingCursor)
+        private val actionsGroup: View? = itemView.findViewById(R.id.aiActionsGroup)
+        private val btnCopy: View? = itemView.findViewById(R.id.btnCopy)
+        private val btnRetry: View? = itemView.findViewById(R.id.btnRetry)
 
         fun bind(message: ChatMessage, isStreaming: Boolean) {
             if (message.isLoading && message.content.isEmpty()) {
                 // Typing indicator — just dots, no markdown needed
                 messageText.text = "✴ "
                 cursorView?.visibility = View.VISIBLE
+                actionsGroup?.visibility = View.GONE
             } else {
                 // Render markdown: ###, **bold**, lists, inline images, etc.
                 val markwon = markwonProvider(itemView.context)
                 markwon.setMarkdown(messageText, message.content)
                 cursorView?.visibility = if (isStreaming) View.VISIBLE else View.GONE
+                
+                if (isStreaming) {
+                    actionsGroup?.visibility = View.GONE
+                } else {
+                    actionsGroup?.visibility = View.VISIBLE
+                    btnCopy?.setOnClickListener { onCopyMessage(message.content) }
+                    btnRetry?.setOnClickListener { onRetryMessage(message) }
+                }
             }
         }
     }
