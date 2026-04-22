@@ -194,12 +194,20 @@ class ChatRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertAssistantMessage(conversationId: String, content: String): ForgeResult<ChatMessage> {
+    override suspend fun insertAssistantMessage(conversationId: String, content: String, thinkingContent: String?): ForgeResult<ChatMessage> {
         return try {
+            val metadataJson = if (thinkingContent != null) {
+                JSONObject().apply {
+                    put("type", "thinking")
+                    put("thinking_content", thinkingContent)
+                }.toString()
+            } else ""
+
             val aiEntity = MessageEntity(
                 conversationId = conversationId,
                 role = MessageRole.ASSISTANT.apiValue,
-                content = content
+                content = content,
+                metadata = metadataJson
             )
             messageDao.insert(aiEntity)
             conversationDao.loadById(conversationId)?.let {
@@ -321,10 +329,15 @@ class ChatRepositoryImpl @Inject constructor(
         var htmlUrl: String? = null
         var screenCardProjectId: String? = null
 
+        var thinkingContent: String? = null
+
         if (metadata.isNotBlank()) {
             runCatching {
                 val json = JSONObject(metadata)
                 when (json.optString("type")) {
+                    "thinking" -> {
+                        thinkingContent = json.optString("thinking_content").takeIf { it.isNotBlank() }
+                    }
                     "canvas_card" -> {
                         isCanvasCard = true
                         val briefJson = json.optJSONObject("brief")
@@ -352,6 +365,7 @@ class ChatRepositoryImpl @Inject constructor(
             conversationId      = conversationId,
             role                = MessageRole.fromApiValue(role),
             content             = content,
+            thinkingContent     = thinkingContent,
             timestamp           = timestamp,
             tokenCount          = tokenCount,
             isCanvasCard        = isCanvasCard,

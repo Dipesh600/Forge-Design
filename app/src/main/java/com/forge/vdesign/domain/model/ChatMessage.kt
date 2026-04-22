@@ -10,6 +10,7 @@ data class ChatMessage(
     val conversationId: String,
     val role: MessageRole,
     val content: String,
+    val thinkingContent: String? = null,
     val timestamp: Long = System.currentTimeMillis(),
     val tokenCount: Int = 0,
     val designReasoning: List<DesignDecision> = emptyList(),

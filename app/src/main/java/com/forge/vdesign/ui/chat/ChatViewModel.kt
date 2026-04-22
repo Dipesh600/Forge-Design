@@ -217,6 +217,7 @@ class ChatViewModel @Inject constructor(
             // 2. Collect agent events
             liveState.value = liveState.value.copy(isSending = false, isStreaming = true)
             var pendingSpeaks = StringBuilder()
+            var pendingThoughts: String? = null
 
             forgeAgent.runLoop(
                 userMessage = text,
@@ -226,17 +227,18 @@ class ChatViewModel @Inject constructor(
                     android.util.Log.e("ChatViewModel", "Agent loop error", e)
                     liveState.value = LiveAgentState() // reset
                     val errMsg = "Something went wrong: ${e.message?.take(80)}"
-                    chatRepository.insertAssistantMessage(conversationId, errMsg)
+                    chatRepository.insertAssistantMessage(conversationId, errMsg, pendingThoughts)
                     agentHistory.add(AgentMessage.Text("user", text))
                     agentHistory.add(AgentMessage.Text("assistant", errMsg))
                 }
                 .collect { event ->
                     when (event) {
                         is AgentEvent.Thinking -> {
+                            pendingThoughts = event.content
                             liveState.value = liveState.value.copy(thinkingContent = event.content)
                         }
                         is AgentEvent.Speaks -> {
-                            liveState.value = liveState.value.copy(thinkingContent = null)
+                            // Do NOT null out thinkingContent. We want it visible while typing natively!
                             streamToUI(event.text, liveState)
                             if (pendingSpeaks.isNotEmpty()) pendingSpeaks.append("\n\n")
                             pendingSpeaks.append(event.text)
@@ -247,8 +249,9 @@ class ChatViewModel @Inject constructor(
                         is AgentEvent.ScreenReady -> {
                             liveState.value = liveState.value.copy(statusLine = null)
                             if (pendingSpeaks.isNotEmpty()) {
-                                chatRepository.insertAssistantMessage(conversationId, pendingSpeaks.toString())
+                                chatRepository.insertAssistantMessage(conversationId, pendingSpeaks.toString(), pendingThoughts)
                                 pendingSpeaks.clear()
+                                pendingThoughts = null
                             }
                             chatRepository.insertScreenCard(
                                 conversationId = conversationId,
@@ -260,21 +263,23 @@ class ChatViewModel @Inject constructor(
                         }
                         is AgentEvent.WaitingForUser -> {
                             liveState.value = liveState.value.copy(statusLine = null, thinkingContent = null)
-                            if (pendingSpeaks.isNotEmpty()) {
-                                chatRepository.insertAssistantMessage(conversationId, pendingSpeaks.toString())
+                            if (pendingSpeaks.isNotEmpty() || pendingThoughts != null) {
+                                val finalText = if (pendingSpeaks.isEmpty()) "I'm pausing to await your input." else pendingSpeaks.toString()
+                                chatRepository.insertAssistantMessage(conversationId, finalText, pendingThoughts)
                                 pendingSpeaks.clear()
+                                pendingThoughts = null
                             }
                             agentHistory.add(AgentMessage.Text("user", text))
                             liveState.value = LiveAgentState()
                         }
                         is AgentEvent.LoopDone -> {
-                            if (pendingSpeaks.isNotEmpty()) {
-                                chatRepository.insertAssistantMessage(conversationId, pendingSpeaks.toString())
+                            if (pendingSpeaks.isNotEmpty() || pendingThoughts != null) {
+                                val finalText = if (pendingSpeaks.isEmpty()) "I've processed your request." else pendingSpeaks.toString()
+                                chatRepository.insertAssistantMessage(conversationId, finalText, pendingThoughts)
                                 agentHistory.add(AgentMessage.Text("user", text))
-                                agentHistory.add(AgentMessage.Text("assistant", pendingSpeaks.toString()))
+                                agentHistory.add(AgentMessage.Text("assistant", finalText))
                                 pendingSpeaks.clear()
-                            } else {
-                                agentHistory.add(AgentMessage.Text("user", text))
+                                pendingThoughts = null
                             }
                             liveState.value = LiveAgentState()
                         }

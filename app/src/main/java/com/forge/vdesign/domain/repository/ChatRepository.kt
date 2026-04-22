@@ -38,8 +38,9 @@ interface ChatRepository {
     /**
      * Persist a plain assistant message — no MiniMax call.
      * Used for clarification questions and chat responses after streaming completes.
+     * Stores optional thinkingContent into the metadata column so reasoning survives restarts.
      */
-    suspend fun insertAssistantMessage(conversationId: String, content: String): ForgeResult<ChatMessage>
+    suspend fun insertAssistantMessage(conversationId: String, content: String, thinkingContent: String? = null): ForgeResult<ChatMessage>
 
     /**
      * Persist a canvas card message to Room.
