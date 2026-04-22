@@ -1,0 +1,34 @@
+{
+  "id": "navigation-patterns-v1",
+  "name": "Mobile Navigation Design Patterns",
+  "category": "navigation",
+  "sourceBooks": ["Android Developer Guidelines", "iOS Human Interface Guidelines", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "nav-bottom-bar-v1",
+      "rule": "Bottom navigation: 3-5 items, icons with labels, 56dp height, active item uses primary color fill, inactive items use muted icon only. Never put secondary actions here.",
+      "weight": 1.0
+    },
+    {
+      "id": "nav-top-bar-v1",
+      "rule": "Top app bar: back/hamburger icon left, screen title center or left-aligned 20sp, action icons right (max 3 visible, rest in overflow menu). 56dp height standard.",
+      "weight": 0.95
+    },
+    {
+      "id": "nav-fab-v1",
+      "rule": "Floating Action Button: bottom-right corner, 56dp diameter, always primary action for that screen. One FAB per screen maximum. Label for extended FAB.",
+      "weight": 0.9
+    },
+    {
+      "id": "nav-gestures-v1",
+      "rule": "Support swipe-back gesture for Android (edge swipe). List items support swipe-to-delete with undo snackbar. Pull-to-refresh with visible loading indicator.",
+      "weight": 0.85
+    },
+    {
+      "id": "nav-search-v1",
+      "rule": "Search: collapsed icon in toolbar that expands full-width on tap, with back/close button, live results below. Filters accessible as horizontal chips below search bar.",
+      "weight": 0.8
+    }
+  ]
+}

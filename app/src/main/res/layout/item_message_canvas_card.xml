@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/canvasCard"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="48dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="18dp"
+    app:cardBackgroundColor="@color/forge_surface_elevated"
+    app:cardElevation="6dp"
+    app:strokeColor="@color/forge_primary"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:minWidth="260dp">
+
+        <!-- FORGE badge row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✦"
+                android:textColor="@color/forge_primary"
+                android:textSize="14sp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FORGE Canvas"
+                android:textColor="@color/forge_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+        </LinearLayout>
+
+        <!-- Project name — large, prominent -->
+        <TextView
+            android:id="@+id/tvProjectName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/forge_on_surface"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+            android:text="FORGE Project" />
+
+        <!-- Screens list — compact, single line -->
+        <TextView
+            android:id="@+id/tvScreensList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/forge_on_surface_variant"
+            android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginBottom="10dp"
+            android:text="Home · Profile · Settings" />
+
+        <!-- Mood + screenCount chip row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:id="@+id/tvCanvasPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textColor="@color/forge_primary"
+                android:textSize="11sp"
+                android:text="minimal" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/forge_outline_variant"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Open in Canvas CTA -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenCanvas"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Open in Canvas →"
+            android:textSize="13sp"
+            app:cornerRadius="20dp"
+            app:backgroundTint="@color/forge_primary" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

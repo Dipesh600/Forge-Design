@@ -1,3 +1,58 @@
 <resources>
-    <string name="app_name">Vdesign</string>
+    <string name="app_name">FORGE</string>
+
+    <!-- Chat screen -->
+    <string name="chat_hint_message">Describe the screen you want to build…</string>
+    <string name="chat_content_description_send">Send message</string>
+    <string name="chat_content_description_voice">Voice input</string>
+    <string name="chat_empty_title">Start designing</string>
+    <string name="chat_empty_subtitle">Describe any Android screen and FORGE will generate it using design principles from 9 canonical books.</string>
+    <string name="chat_error_generic">Something went wrong. Please try again.</string>
+    <string name="chat_error_network">No connection. Check your internet and try again.</string>
+    <string name="chat_error_auth">Session expired. Please sign in again.</string>
+    <string name="chat_ai_label">FORGE</string>
+    <string name="chat_typing_indicator">FORGE is designing…</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_title_chat">FORGE</string>
+    <string name="toolbar_title_skills">Design Skills</string>
+    <string name="toolbar_title_canvas">Canvas</string>
+    <string name="toolbar_title_settings">Settings</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_chat">Chat</string>
+    <string name="nav_canvas">Canvas</string>
+    <string name="nav_skills">Skills</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Error states -->
+    <string name="error_title">Something went wrong</string>
+    <string name="error_subtitle">We couldn\'t complete that action. Try again or contact support if this persists.</string>
+    <string name="error_action_retry">Try again</string>
+
+    <!-- Empty states -->
+    <string name="empty_conversations_title">No conversations yet</string>
+    <string name="empty_conversations_subtitle">Start a new conversation to generate your first screen.</string>
+
+    <!-- Actions (verb labels — Micro-copy Skill rule) -->
+    <string name="action_send">Send</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save changes</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_new_conversation">New conversation</string>
+    <string name="action_export">Export to Android Studio</string>
+
+    <!-- Accessibility content descriptions -->
+    <string name="cd_forge_logo">FORGE logo</string>
+    <string name="cd_user_avatar">Your profile picture</string>
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_copy_message">Copy message content</string>
+    <string name="cd_skill_toggle">Toggle skill active state</string>
+
 </resources>

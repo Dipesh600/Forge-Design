@@ -1,0 +1,34 @@
+{
+  "id": "health-design-v1",
+  "name": "Health & Wellness Design System",
+  "category": "health",
+  "sourceBooks": ["Calm Technology", "Designing for Behavior Change", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "health-calm-v1",
+      "rule": "Use calming, desaturated palettes: mint, sage green, warm white, or soft blue. Avoid jarring red/orange except for alert states. Minimal mood is default.",
+      "weight": 1.0
+    },
+    {
+      "id": "health-progress-v1",
+      "rule": "Progress visualization is central: circular progress rings, linear progress bars, and streak counters must be prominent on home screen. Use animation to celebrate milestones.",
+      "weight": 0.95
+    },
+    {
+      "id": "health-data-v1",
+      "rule": "Health metrics (steps, heart rate, calories, sleep) should use large number displays with unit label below. Group related metrics in card clusters.",
+      "weight": 0.9
+    },
+    {
+      "id": "health-safety-v1",
+      "rule": "Emergency/crisis features must be immediately accessible (never buried). Safety actions use red only when absolutely necessary and must be clearly labeled.",
+      "weight": 0.85
+    },
+    {
+      "id": "health-motivation-v1",
+      "rule": "Positive reinforcement through color and copy: completed states use green checks, streaks use fire emoji or badge, achievements are celebrated with full-screen moments.",
+      "weight": 0.8
+    }
+  ]
+}

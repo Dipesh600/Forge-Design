@@ -1,0 +1,12 @@
+{
+  "name": "forge-functions-stub",
+  "version": "1.0.0",
+  "description": "Legacy stub — real functions are in /forge codebase",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-functions": "^6.0.0"
+  }
+}

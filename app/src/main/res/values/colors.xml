@@ -1,5 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         FORGE Brand Palette
+         Primary: Indigo-Violet — intelligent, creative, trustworthy
+         Surface: Near-black — focuses attention on generated content
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Brand -->
+    <color name="forge_primary">#7C5CFC</color>
+    <color name="forge_primary_variant">#9D80FF</color>
+    <color name="forge_primary_dark">#5A3ED4</color>
+    <color name="forge_on_primary">#FFFFFF</color>
+
+    <color name="forge_secondary">#00D4AA</color>
+    <color name="forge_secondary_variant">#00F0C0</color>
+    <color name="forge_on_secondary">#001A14</color>
+
+    <!-- Surfaces (Dark mode first — this is the default visual language) -->
+    <color name="forge_background">#0D0D12</color>
+    <color name="forge_surface">#13131A</color>
+    <color name="forge_surface_variant">#1C1C27</color>
+    <color name="forge_surface_elevated">#1E1E2E</color>
+    <color name="forge_surface_container">#242433</color>
+    <color name="forge_surface_bright">#2A2A3D</color>
+
+    <!-- Text on dark surfaces -->
+    <color name="forge_on_background">#F0F0F8</color>
+    <color name="forge_on_surface">#E8E8F0</color>
+    <color name="forge_on_surface_variant">#9898B8</color>
+    <color name="forge_outline">#3D3D5C</color>
+    <color name="forge_outline_variant">#262640</color>
+
+    <!-- Semantic colours -->
+    <color name="forge_error">#FF5C6A</color>
+    <color name="forge_error_container">#3D0A0F</color>
+    <color name="forge_on_error">#FFFFFF</color>
+    <color name="forge_warning">#FFB84D</color>
+    <color name="forge_success">#00D4AA</color>
+
+    <!-- Chat bubbles -->
+    <color name="forge_bubble_user">#7C5CFC</color>
+    <color name="forge_bubble_ai">#1C1C27</color>
+    <color name="forge_bubble_user_text">#FFFFFF</color>
+    <color name="forge_bubble_ai_text">#E8E8F0</color>
+
+    <!-- Skill system -->
+    <color name="forge_skill_active">#7C5CFC</color>
+    <color name="forge_skill_inactive">#262640</color>
+    <color name="forge_critic_pass">#00D4AA</color>
+    <color name="forge_critic_fail">#FF5C6A</color>
+    <color name="forge_critic_warn">#FFB84D</color>
+
+    <!-- Light theme overrides (used when system is in light mode) -->
+    <color name="forge_background_light">#F5F5FF</color>
+    <color name="forge_surface_light">#FFFFFF</color>
+    <color name="forge_on_background_light">#0D0D12</color>
+    <color name="forge_on_surface_light">#13131A</color>
+    <color name="forge_on_surface_variant_light">#5C5C80</color>
+    <color name="forge_outline_light">#C0C0DC</color>
+
+    <!-- Generic -->
+    <color name="transparent">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <!-- Canvas semantic color aliases (Material 3 names → FORGE palette) -->
+    <color name="canvas_bg">#0D0D12</color>
+    <color name="surface">#13131A</color>
+    <color name="surface_variant">#1C1C27</color>
+    <color name="on_surface">#E8E8F0</color>
+    <color name="on_surface_variant">#9898B8</color>
+    <color name="primary">#7C5CFC</color>
+    <color name="primary_container">#2A1A7A</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="secondary">#00D4AA</color>
+    <color name="error">#FF5C6A</color>
+    <color name="outline_variant">#262640</color>
+    <color name="shimmer_base">#1C1C27</color>
+
 </resources>

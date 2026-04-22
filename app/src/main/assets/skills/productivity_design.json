@@ -1,0 +1,34 @@
+{
+  "id": "productivity-design-v1",
+  "name": "Productivity App Design System",
+  "category": "productivity",
+  "sourceBooks": ["Getting Things Done", "Designing Calm Technology", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "productivity-focus-v1",
+      "rule": "Minimal mood is mandatory. White or off-white backgrounds, black or very dark text, single accent color for actions only. No decorative elements that don't serve a function.",
+      "weight": 1.0
+    },
+    {
+      "id": "productivity-hierarchy-v1",
+      "rule": "Clear visual hierarchy: task titles 16sp medium, subtasks 14sp regular, metadata (due date, priority) 12sp muted color. Indentation for nested tasks: 16dp per level.",
+      "weight": 0.95
+    },
+    {
+      "id": "productivity-quick-capture-v1",
+      "rule": "Quick add/capture must be a persistent floating button or large input at top. Friction to add a task must be 1 tap. Voice and text input both supported.",
+      "weight": 0.9
+    },
+    {
+      "id": "productivity-completion-v1",
+      "rule": "Task completion: checkbox left-aligned, strikethrough title on check, subtle slide-out animation. Completed tasks move to bottom with muted styling, not deleted.",
+      "weight": 0.85
+    },
+    {
+      "id": "productivity-today-v1",
+      "rule": "Home view is Today view: date header, task count for today, overdue section (if any) highlighted in red, no-due-date inbox section at bottom.",
+      "weight": 0.8
+    }
+  ]
+}

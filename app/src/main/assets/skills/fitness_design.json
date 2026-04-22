@@ -1,0 +1,34 @@
+{
+  "id": "fitness-design-v1",
+  "name": "Fitness App Design System",
+  "category": "fitness",
+  "sourceBooks": ["Atomic Habits", "Hooked", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "fitness-energy-v1",
+      "rule": "High energy visual language: vibrant gradients (orange-red, electric blue, neon green), bold typography, full-bleed workout imagery. Vibrant mood is default for fitness.",
+      "weight": 1.0
+    },
+    {
+      "id": "fitness-workout-card-v1",
+      "rule": "Workout cards: background image with gradient overlay for contrast, workout name in 20sp bold white, duration and difficulty below, large Play/Start button bottom-right.",
+      "weight": 0.95
+    },
+    {
+      "id": "fitness-progress-v1",
+      "rule": "Progress is the hero metric: weekly ring chart, streak counter with fire icon, personal records displayed as large numbers. These must be above the fold on home.",
+      "weight": 0.9
+    },
+    {
+      "id": "fitness-timer-v1",
+      "rule": "Active workout screen: large countdown timer center screen, exercise name 24sp, next exercise preview below, minimal UI so user can focus. Dark background always.",
+      "weight": 0.85
+    },
+    {
+      "id": "fitness-social-v1",
+      "rule": "Activity feed showing friend workouts with kudos/like mechanic. Leaderboard view with rank, avatar, stat. Competition and community features drive retention.",
+      "weight": 0.8
+    }
+  ]
+}

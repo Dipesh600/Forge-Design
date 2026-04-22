@@ -1,0 +1,34 @@
+{
+  "id": "onboarding-design-v1",
+  "name": "Onboarding Flow Design System",
+  "category": "onboarding",
+  "sourceBooks": ["Hooked", "Don't Make Me Think", "Mobile UX Design"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "onboarding-progressive-v1",
+      "rule": "Progressive disclosure: show only what the user needs at this step. Maximum 1 input field per screen during onboarding. Never ask for information you don't immediately need.",
+      "weight": 1.0
+    },
+    {
+      "id": "onboarding-value-v1",
+      "rule": "First screen must communicate core value proposition in 1 headline (max 6 words) and 1 supporting sentence. Show the app's benefit, not its features.",
+      "weight": 0.95
+    },
+    {
+      "id": "onboarding-illustration-v1",
+      "rule": "Use full-bleed illustrations or animations on value screens. Illustrations should show the app in use, not abstract concepts. Lottie animations preferred over static images.",
+      "weight": 0.9
+    },
+    {
+      "id": "onboarding-progress-v1",
+      "rule": "Step indicator: small dots or thin progress bar at top. Show how many steps remain. Never more than 5 steps in onboarding before reaching the main app.",
+      "weight": 0.85
+    },
+    {
+      "id": "onboarding-skip-v1",
+      "rule": "Always offer a skip option in top-right corner (except for mandatory account creation). Skip should be obvious but not more prominent than the primary CTA.",
+      "weight": 0.8
+    }
+  ]
+}

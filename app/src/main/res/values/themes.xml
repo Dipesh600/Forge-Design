@@ -1,9 +1,112 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Vdesign" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         FORGE Material 3 Theme — Dark mode first
+         Primary surface is near-black. Content pops against dark ground.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <style name="Base.Theme.Forge" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Brand colours -->
+        <item name="colorPrimary">@color/forge_primary</item>
+        <item name="colorOnPrimary">@color/forge_on_primary</item>
+        <item name="colorPrimaryContainer">@color/forge_primary_dark</item>
+        <item name="colorOnPrimaryContainer">@color/forge_primary_variant</item>
+
+        <item name="colorSecondary">@color/forge_secondary</item>
+        <item name="colorOnSecondary">@color/forge_on_secondary</item>
+
+        <!-- Surfaces -->
+        <item name="android:colorBackground">@color/forge_background</item>
+        <item name="colorSurface">@color/forge_surface</item>
+        <item name="colorOnSurface">@color/forge_on_surface</item>
+        <item name="colorSurfaceVariant">@color/forge_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/forge_on_surface_variant</item>
+        <item name="colorSurfaceContainer">@color/forge_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/forge_surface_elevated</item>
+
+        <!-- Outlines -->
+        <item name="colorOutline">@color/forge_outline</item>
+        <item name="colorOutlineVariant">@color/forge_outline_variant</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/forge_error</item>
+        <item name="colorErrorContainer">@color/forge_error_container</item>
+        <item name="colorOnError">@color/forge_on_error</item>
+
+        <!-- Status bar — transparent, draw behind -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Type scale -->
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Forge.Display.Large</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Forge.Display.Medium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Forge.Display.Small</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Forge.Headline.Large</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Forge.Headline.Medium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Forge.Headline.Small</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Forge.Title.Large</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Forge.Title.Medium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Forge.Title.Small</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Forge.Body.Large</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Forge.Body.Medium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Forge.Body.Small</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Forge.Label.Large</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Forge.Label.Medium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Forge.Label.Small</item>
+
+        <!-- Shape system -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Forge.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Forge.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Forge.Large</item>
+
+        <!-- Soft input adjusts content, not resize -->
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
-    <style name="Theme.Vdesign" parent="Base.Theme.Vdesign" />
+    <style name="Theme.Forge" parent="Base.Theme.Forge" />
+
+    <!-- Shape system -->
+    <style name="ShapeAppearance.Forge.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">@dimen/corner_radius_sm</item>
+    </style>
+
+    <style name="ShapeAppearance.Forge.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">@dimen/corner_radius_md</item>
+    </style>
+
+    <style name="ShapeAppearance.Forge.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">@dimen/corner_radius_lg</item>
+    </style>
+
+    <!-- Input style — rounded, floating label -->
+    <style name="Widget.Forge.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_radius_md</item>
+        <item name="boxStrokeColor">@color/forge_outline</item>
+        <item name="hintTextColor">@color/forge_on_surface_variant</item>
+    </style>
+
+    <!-- Button — filled (primary action) -->
+    <style name="Widget.Forge.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/touch_target_comfortable</item>
+        <item name="cornerRadius">@dimen/corner_radius_md</item>
+    </style>
+
+    <!-- Button — tonal (secondary action) -->
+    <style name="Widget.Forge.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:minHeight">@dimen/touch_target_comfortable</item>
+        <item name="cornerRadius">@dimen/corner_radius_md</item>
+    </style>
+
+    <!-- Chip style -->
+    <style name="Widget.Forge.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">@dimen/corner_radius_xl</item>
+        <item name="chipBackgroundColor">@color/forge_surface_variant</item>
+        <item name="chipStrokeColor">@color/forge_outline</item>
+        <item name="chipStrokeWidth">1dp</item>
+    </style>
+
 </resources>

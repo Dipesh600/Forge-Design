@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ══════════════════════════════════════════════════════════════════
+         FORGE Dimension System — 8dp grid
+         Rule: All spacing is a multiple of 8dp. Only exception: 4dp for
+         fine internal spacing within components (e.g., icon+label gap).
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Base grid unit -->
+    <dimen name="spacing_1">4dp</dimen>
+    <dimen name="spacing_2">8dp</dimen>
+    <dimen name="spacing_3">12dp</dimen>
+    <dimen name="spacing_4">16dp</dimen>
+    <dimen name="spacing_5">20dp</dimen>
+    <dimen name="spacing_6">24dp</dimen>
+    <dimen name="spacing_8">32dp</dimen>
+    <dimen name="spacing_10">40dp</dimen>
+    <dimen name="spacing_12">48dp</dimen>
+    <dimen name="spacing_16">64dp</dimen>
+    <dimen name="spacing_20">80dp</dimen>
+    <dimen name="spacing_24">96dp</dimen>
+
+    <!-- Layout structural spacing -->
+    <dimen name="screen_horizontal_margin">16dp</dimen>
+    <dimen name="screen_vertical_margin">16dp</dimen>
+    <dimen name="section_gap">32dp</dimen>          <!-- Between sections -->
+    <dimen name="group_gap">8dp</dimen>             <!-- Between related elements -->
+    <dimen name="component_gap">16dp</dimen>        <!-- Between components -->
+
+    <!-- Touch targets — WCAG 2.5.5: minimum 48×48dp -->
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="touch_target_comfortable">56dp</dimen>
+
+    <!-- Corner radii -->
+    <dimen name="corner_radius_xs">4dp</dimen>
+    <dimen name="corner_radius_sm">8dp</dimen>
+    <dimen name="corner_radius_md">12dp</dimen>
+    <dimen name="corner_radius_lg">16dp</dimen>
+    <dimen name="corner_radius_xl">24dp</dimen>
+    <dimen name="corner_radius_full">100dp</dimen>  <!-- Pill shape -->
+
+    <!-- Chat specific -->
+    <dimen name="bubble_corner_radius">18dp</dimen>
+    <dimen name="bubble_corner_radius_sm">4dp</dimen>
+    <dimen name="bubble_max_width_fraction">0.75dp</dimen> <!-- 75% of screen width -->
+    <dimen name="bubble_padding_h">16dp</dimen>
+    <dimen name="bubble_padding_v">10dp</dimen>
+    <dimen name="message_gap">8dp</dimen>
+    <dimen name="message_group_gap">16dp</dimen>
+
+    <!-- Input bar -->
+    <dimen name="input_bar_height">56dp</dimen>
+    <dimen name="input_corner_radius">28dp</dimen>
+    <dimen name="input_padding_h">16dp</dimen>
+    <dimen name="input_padding_v">12dp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_size_sm">16dp</dimen>
+    <dimen name="icon_size_md">24dp</dimen>
+    <dimen name="icon_size_lg">32dp</dimen>
+
+    <!-- Toolbar -->
+    <dimen name="toolbar_height">64dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_md">4dp</dimen>
+    <dimen name="elevation_lg">8dp</dimen>
+
+    <!-- Typing indicator dots -->
+    <dimen name="typing_dot_size">8dp</dimen>
+    <dimen name="typing_dot_gap">4dp</dimen>
+
+    <!-- Canvas specific -->
+    <dimen name="color_swatch_size">36dp</dimen>
+    <dimen name="color_swatch_gap">6dp</dimen>
+    <dimen name="phone_frame_width">340dp</dimen>
+    <dimen name="phone_frame_height">720dp</dimen>
+
+</resources>

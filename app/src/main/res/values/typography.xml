@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         FORGE Type Scale — based on Material Design 3
+         Source: The Elements of Typographic Style + Practical Typography
+         Rules: Max 3 sizes on any one screen. Line height 1.4–1.6×.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <style name="TextAppearance.Forge.Display.Large" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">57sp</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:lineHeight">64sp</item>
+        <item name="android:textColor">@color/forge_on_background</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Display.Medium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textSize">45sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">52sp</item>
+        <item name="android:textColor">@color/forge_on_background</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Display.Small" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">36sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">44sp</item>
+        <item name="android:textColor">@color/forge_on_background</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Headline.Large" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textSize">32sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Headline.Medium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Headline.Small" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Title.Large" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Title.Medium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.009</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Title.Small" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.007</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Body.Large" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.031</item>
+        <item name="android:lineHeight">26sp</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Body.Medium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.018</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="android:textColor">@color/forge_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Body.Small" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.033</item>
+        <item name="android:lineHeight">18sp</item>
+        <item name="android:textColor">@color/forge_on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Label.Large" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.007</item>
+        <item name="android:textColor">@color/forge_on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Label.Medium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.042</item>
+        <item name="android:textColor">@color/forge_on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Forge.Label.Small" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.045</item>
+        <item name="android:textColor">@color/forge_on_surface_variant</item>
+    </style>
+
+</resources>

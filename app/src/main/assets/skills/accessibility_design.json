@@ -1,0 +1,34 @@
+{
+  "id": "accessibility-design-v1",
+  "name": "Accessibility & WCAG Design System",
+  "category": "accessibility",
+  "sourceBooks": ["WCAG 2.2", "Inclusive Design Patterns", "Material Design 3 Accessibility"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "a11y-contrast-v1",
+      "rule": "Text contrast ratio minimum 4.5:1 for normal text (WCAG AA), 3:1 for large text (18sp+ or 14sp bold). Never use light gray on white or dark gray on black.",
+      "weight": 1.0
+    },
+    {
+      "id": "a11y-touch-target-v1",
+      "rule": "Minimum touch target 44x44dp for all interactive elements. If icon is smaller, add invisible padding to reach 44dp. Distance between touch targets minimum 8dp.",
+      "weight": 0.95
+    },
+    {
+      "id": "a11y-labels-v1",
+      "rule": "All icons must have content descriptions. Form fields must have visible labels (not just placeholder text). Error messages must describe the problem and how to fix it.",
+      "weight": 0.9
+    },
+    {
+      "id": "a11y-focus-v1",
+      "rule": "Keyboard/screen reader focus must follow logical visual order (top-left to bottom-right). Focus indicator must be visible (2dp ring in primary color).",
+      "weight": 0.85
+    },
+    {
+      "id": "a11y-motion-v1",
+      "rule": "All animations must respect system reduced-motion setting. Animations used for meaning (loading, progress) must have a non-animated fallback state.",
+      "weight": 0.8
+    }
+  ]
+}

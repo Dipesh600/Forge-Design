@@ -1,0 +1,34 @@
+{
+  "id": "ecommerce-design-v1",
+  "name": "E-Commerce Design System",
+  "category": "ecommerce",
+  "sourceBooks": ["Don't Make Me Think", "Conversion Optimization", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "ecommerce-product-v1",
+      "rule": "Product cards: high-quality image top 60% of card, product name in 16sp medium, price in 18sp bold, add-to-cart button below. 2-column grid default, 1-column list option.",
+      "weight": 1.0
+    },
+    {
+      "id": "ecommerce-cta-v1",
+      "rule": "Add to Cart and Buy Now must be high-contrast, full-width at bottom of product detail screen. Never below the fold on first scroll. Use distinct colors for each.",
+      "weight": 0.95
+    },
+    {
+      "id": "ecommerce-trust-v1",
+      "rule": "Trust signals near purchase actions: star rating with count, verified purchase badges, free shipping callout, secure checkout lock icon. These reduce cart abandonment.",
+      "weight": 0.9
+    },
+    {
+      "id": "ecommerce-search-v1",
+      "rule": "Search bar at top of home, prominent filter/sort options. Category pills horizontally scrollable below search. Recent searches and trending shown when search is empty.",
+      "weight": 0.85
+    },
+    {
+      "id": "ecommerce-checkout-v1",
+      "rule": "Checkout: step indicator at top (1. Cart → 2. Address → 3. Payment → 4. Confirm), order summary always visible, total price with breakdown. One-tap payment at final step.",
+      "weight": 0.8
+    }
+  ]
+}

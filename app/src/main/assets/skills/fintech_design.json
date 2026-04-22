@@ -1,0 +1,34 @@
+{
+  "id": "fintech-design-v1",
+  "name": "Fintech Design System",
+  "category": "fintech",
+  "sourceBooks": ["Designing for Finance", "Material Design 3", "iOS Human Interface Guidelines"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "fintech-trust-v1",
+      "rule": "Use navy, deep blue, or dark teal as primary color. Trust is communicated through color restraint — avoid bright or playful palettes. Structured mood with high information density.",
+      "weight": 1.0
+    },
+    {
+      "id": "fintech-data-v1",
+      "rule": "Financial data must be scannable: large account balance at top, transaction list with clear debit/credit color coding (red/green), monospaced font for amounts.",
+      "weight": 0.95
+    },
+    {
+      "id": "fintech-cta-v1",
+      "rule": "Primary CTA (Send, Pay, Transfer) must be full-width, high-contrast, bottom of screen. Never bury critical actions in menus.",
+      "weight": 0.9
+    },
+    {
+      "id": "fintech-security-v1",
+      "rule": "Include security signal elements: lock icon near actions, SSL badge on login, masked account numbers (••••1234). Users must feel protected at every step.",
+      "weight": 0.85
+    },
+    {
+      "id": "fintech-nav-v1",
+      "rule": "Bottom navigation with 4 items max: Home, Cards, Send/Pay, Profile. No hamburger menus — everything must be reachable in 2 taps.",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Thinking Header Button -->
+    <LinearLayout
+        android:id="@+id/llThinkingHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_thinking_header"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💭 Agent Thinking..."
+            android:textColor="#A0A0B0"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivThinkingChevron"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:src="@android:drawable/arrow_down_float"
+            android:tint="#A0A0B0" />
+    </LinearLayout>
+
+    <!-- Collapsible Reasoning Content -->
+    <TextView
+        android:id="@+id/tvThinkingContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="8dp"
+        android:padding="8dp"
+        android:background="@drawable/bg_thinking_content"
+        android:textColor="#B0B0C0"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:visibility="gone" />
+
+</LinearLayout>

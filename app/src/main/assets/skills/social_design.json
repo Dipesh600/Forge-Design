@@ -1,0 +1,34 @@
+{
+  "id": "social-design-v1",
+  "name": "Social App Design System",
+  "category": "social",
+  "sourceBooks": ["Hooked", "Designing Social Interfaces", "Material Design 3"],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "social-feed-v1",
+      "rule": "Full-width card feed with avatar, username, timestamp, content, and reaction row. Cards should have 8dp corner radius, subtle shadow, 16dp horizontal padding.",
+      "weight": 1.0
+    },
+    {
+      "id": "social-engagement-v1",
+      "rule": "Engagement elements (like, comment, share) must be immediately visible below content — not hidden. Use icon + count pairs, minimum 44dp tap target.",
+      "weight": 0.95
+    },
+    {
+      "id": "social-color-v1",
+      "rule": "Expressive, vibrant color palette. Primary color should be bold and brand-defining. Use color for actions and highlights, not for backgrounds.",
+      "weight": 0.9
+    },
+    {
+      "id": "social-stories-v1",
+      "rule": "Stories row at top of feed: circular avatars with colorful border ring, 60x60dp, horizontal scroll, + add button as first item.",
+      "weight": 0.85
+    },
+    {
+      "id": "social-profile-v1",
+      "rule": "Profile: large cover photo or gradient header, circular avatar overlapping, follower/following/post counts horizontally displayed, bio below.",
+      "weight": 0.8
+    }
+  ]
+}

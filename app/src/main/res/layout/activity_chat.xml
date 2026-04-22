@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_chat.xml — FORGE Chat Screen
+  The full chat UI (moved from activity_main.xml).
+  Receives conversationId via Intent → ChatViewModel via SavedStateHandle.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.chat.ChatActivity">
+
+    <!-- ── Top bar ─────────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/chatTopBar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="4dp"
+        android:background="@color/forge_surface_elevated"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Back to conversation list -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Back"
+            app:tint="@color/forge_on_surface" />
+
+        <!-- Conversation title (auto-generated from first message) -->
+        <TextView
+            android:id="@+id/tvConversationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:text="New Chat"
+            android:textColor="@color/forge_on_surface"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- FORGE wordmark -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⬡ FORGE"
+            android:textColor="@color/forge_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:layout_marginEnd="12dp" />
+
+        <!-- Sign-out -->
+        <ImageButton
+            android:id="@+id/btnSignOut"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Sign out"
+            app:tint="@color/forge_on_surface_variant" />
+    </LinearLayout>
+
+    <!-- ── Message list (Room-backed) ──────────────────────────────────── -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingHorizontal="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/chatTopBar"
+        app:layout_constraintBottom_toTopOf="@+id/inputContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ── Streaming bubble (permanently hidden — streaming is now inline) ── -->
+    <!--
+        This container is kept in the layout for reference only.
+        Streaming messages now appear inline in the RecyclerView as live ChatMessage
+        items, so this view is always GONE and has no height in the constraint chain.
+    -->
+    <LinearLayout
+        android:id="@+id/streamingContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/inputContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✦ FORGE"
+            android:textSize="10sp"
+            android:textColor="#6B6B8A"
+            android:layout_marginBottom="4dp"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_ai_bubble"
+            android:maxWidth="280dp">
+
+            <TextView
+                android:id="@+id/tvStreamingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:paddingEnd="4dp"
+                android:textColor="#E8E8F0"
+                android:textSize="15sp"
+                android:lineSpacingExtra="2dp" />
+
+            <!-- Blinking cursor -->
+            <TextView
+                android:id="@+id/tvStreamingCursorInline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▌"
+                android:textColor="#7C6AF7"
+                android:textSize="15sp"
+                android:paddingEnd="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ── Input bar ──────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/inputContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/forge_surface_container"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Tell FORGE what to design..."
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:padding="12dp"
+            android:textColor="@color/forge_on_surface"
+            android:textColorHint="@color/forge_on_surface_variant"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Send"
+            android:src="@android:drawable/ic_menu_send"
+            app:tint="@color/forge_primary" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

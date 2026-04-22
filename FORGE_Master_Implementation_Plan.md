@@ -153,71 +153,79 @@ Vdesign2/  (GitHub: Forge-Design)
 **DoD:** User can sign in, send a message, receive MiniMax AI response in chat UI.
 
 ### 1.1 Firebase Setup
-- [ ] Create Firebase project (Auth, Firestore, Storage, Functions stub)
-  - [ ] Enable Email + Google Sign-In
-  - [ ] Firestore security rules (deny all by default, auth-gated reads)
-  - [ ] Create Storage bucket
-  - [ ] Deploy stub Cloud Function
-- [ ] Add `google-services.json` to Android project
+- [x] Create Firebase project (Auth, Firestore, Storage, Functions stub)
+  - [x] Enable Email + Google Sign-In
+  - [x] Firestore security rules (deny all by default, auth-gated reads)
+  - [x] Create Storage bucket
+  - [x] Deploy stub Cloud Function
+- [x] Add `google-services.json` to Android project
 
 ### 1.2 Android Project Init
-- [ ] Update package namespace (`com.shuvmarg.vdesign` → decide on `com.forge`)
-- [ ] Add dependencies to `build.gradle.kts`:
-  - [ ] Firebase BOM (Auth, Firestore, Functions, Analytics)
-  - [ ] Hilt dependency injection
-  - [ ] Retrofit + OkHttp
-  - [ ] Room Database + KSP processor
-  - [ ] DataStore Preferences
-  - [ ] Kotlin Coroutines + Flow
-  - [ ] Navigation Component
-  - [ ] ViewBinding enabled
-- [ ] FORGE brand MaterialTheme (primary, secondary, neutral palette)
-- [ ] App builds and runs cleanly ✅
+- [x] Update package namespace (`com.shuvmarg.vdesign` → decide on `com.forge`)
+- [x] Add dependencies to `build.gradle.kts`:
+  - [x] Firebase BOM (Auth, Firestore, Functions, Analytics)
+  - [x] Hilt dependency injection
+  - [x] Retrofit + OkHttp
+  - [x] Room Database + KSP processor
+  - [x] DataStore Preferences
+  - [x] Kotlin Coroutines + Flow
+  - [x] Navigation Component
+  - [x] ViewBinding enabled
+- [x] FORGE brand MaterialTheme (primary, secondary, neutral palette)
+- [x] App builds and runs cleanly ✅
 
 ### 1.3 MiniMax AI Integration
 > ⚠️ **Security rule: MiniMax API key must NEVER be in the Android app.** Always proxy through Firebase Cloud Function.
 
-- [ ] `functions/minimax_proxy.js` — validates Firebase Auth, holds API key in env config, forwards to MiniMax API
-- [ ] Deploy `minimax_proxy` to Firebase Functions
-- [ ] `MiniMaxClient.kt` — Retrofit client pointing to Firebase Function proxy
-  - [ ] Unit test passes
+- [x] `functions/minimax_proxy.js` — validates Firebase Auth, holds API key in env config, forwards to MiniMax API
+- [x] Deploy `minimax_proxy` to Firebase Functions
+- [x] `MiniMaxClient.kt` — Retrofit client pointing to Firebase Function proxy
+  - [x] Unit test passes
 
 ### 1.4 Chat Foundation
-- [ ] `ConversationManager.kt` — maintains message history, truncates at 80% of MiniMax token limit, persists to Room
-- [ ] `ChatViewModel.kt` — StateFlow state machine: `Idle → Loading → Success/Error`
-- [ ] Chat UI (`chat_fragment.xml`) — RecyclerView with DiffUtil, user bubble (right), AI bubble (left), typing indicator, input bar
+- [x] `ConversationManager.kt` — maintains message history, truncates at 80% of MiniMax token limit, persists to Room
+- [x] `ChatViewModel.kt` — StateFlow state machine: `Idle → Loading → Success/Error`
+- [x] Chat UI (`chat_fragment.xml`) — RecyclerView with DiffUtil, user bubble (right), AI bubble (left), typing indicator, input bar
 
 **W3 Milestone:** Firebase + Chat live. Sign in → message MiniMax → see response.
 
 ---
 
-## ✦ PHASE 2 — Stitch MCP: Screen Generation
+## ✦ PHASE 2 — Stitch MCP: Screen Generation ✅
 **Weeks 4–7** | **Goal:** Text description → rendered Android XML layout in Screen Canvas.
 **DoD:** Typing description in chat produces rendered XML layout in canvas.
 
 ### 2.1 Stitch MCP Server Integration
-- [ ] `functions/stitch_mcp_proxy.js` — Firebase Function wrapping Stitch MCP calls
+- [x] `functions/stitch_mcp_proxy.js` — Firebase Function wrapping Stitch MCP calls
   - Tools: `generate_screen`, `edit_screen`, `regenerate_screen`
-- [ ] `StitchMcpClient.kt` — calls Firebase proxy, returns raw XML
-- [ ] `McpToolExecutor.kt` — typed Kotlin wrappers for all 3 tools with error handling + retry
+  - *(Deployed 2026-04-19 — uses @modelcontextprotocol/sdk + stitch-mcp npm package)*
+- [x] `StitchMcpClient.kt` — calls Firebase proxy, returns raw XML
+- [x] `McpToolExecutor.kt` — typed Kotlin wrappers for all 3 tools with error handling + retry (3 attempts, exponential backoff)
 
 ### 2.2 XML Runtime Renderer
-- [ ] `XmlRenderer.kt`
+- [x] `XmlRenderer.kt`
   - Runtime parse via `LayoutInflater` in sandboxed container
+  - Manual fallback parser for unknown views
   - Resolves `@color`, `@dimen`, `@string` refs from local resource stubs
-  - Handles ConstraintLayout, LinearLayout, FrameLayout
+  - Handles ConstraintLayout, LinearLayout, FrameLayout, ScrollView, CardView
   - Graceful error state (no crash)
 
 ### 2.3 Screen Canvas
-- [ ] `ScreenCanvasActivity.kt` — sandboxed XML preview with phone frame
-- [ ] Canvas UI: loading shimmer, error state with retry, split-view (chat left + canvas right/bottom sheet)
+- [x] `ScreenCanvasActivity.kt` — sandboxed XML preview with phone frame (340×720dp)
+- [x] Canvas UI: loading state, error state with retry, design palette swatches, typography info
+- [x] Design Reasoning panel — shows decisions + principles + source books
+- [x] Bottom action bar: Variants | Regenerate | Export (Phase 4/5 stubs)
+- [x] `CanvasViewModel.kt` — full IntentArchitect → Stitch → ScreenComposer pipeline
 
 ### 2.4 IntentArchitect Agent
-- [ ] `DesignBrief.kt` data class (`screen_type`, `user_goal`, `constraints[]`, `mood`, `platform`)
-- [ ] `IntentArchitectAgent.kt` — vague message → structured brief, asks up to 2 clarifying questions
-- [ ] Wire IntentArchitect into generation flow before Stitch call
+- [x] `DesignBrief.kt` data class (`screen_type`, `user_goal`, `constraints[]`, `mood`, `platform`)
+- [x] `IntentArchitectAgent.kt` — vague message → structured brief, clarification flow
+- [x] Wire IntentArchitect into chat flow — design requests show Canvas Card + auto-launch canvas
+  - *(ChatViewModel detects design requests via keyword heuristic + MiniMax structured output)*
+  - *(Canvas Card in RecyclerView with "Open in Canvas →" CTA)*
+  - *(MainActivity collects canvasLaunchEvents and starts ScreenCanvasActivity)*
 
-**W5 Milestone:** First screen generated. W7: IntentArchitect live.
+**W5 Milestone ✅ First screen generated. W7 ✅ IntentArchitect live.**
 
 ---
 
@@ -383,7 +391,7 @@ feature/p4-agents
 
 | Phase | Status | Completion |
 |---|---|---|
-| P1 — Foundation | 🔴 Not started | 0% |
+| P1 — Foundation | 🟡 In progress | 10% |
 | P2 — Stitch MCP | 🔴 Not started | 0% |
 | P3 — Skill System | 🔴 Not started | 0% |
 | P4 — Agentic Layer | 🔴 Not started | 0% |
