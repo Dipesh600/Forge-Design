@@ -28,17 +28,17 @@
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textColor="@color/forge_on_surface"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintStart_toEndOf="@id/tvIcon"
         app:layout_constraintEnd_toStartOf="@id/tvTime"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tvPreview"
-        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Design a fintech dashboard" />
 
     <!-- Timestamp -->
@@ -46,48 +46,32 @@
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="13sp"
         android:textColor="@color/forge_on_surface_variant"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@id/btnDelete"
-        app:layout_constraintTop_toTopOf="@id/tvTitle"
-        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="2h ago" />
 
     <!-- Delete button -->
     <ImageButton
         android:id="@+id/btnDelete"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_delete"
         android:contentDescription="Delete conversation"
-        app:tint="@color/forge_on_surface_variant"
+        app:tint="#6B6B8A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Message preview -->
-    <TextView
-        android:id="@+id/tvPreview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:textColor="@color/forge_on_surface_variant"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="2dp"
-        app:layout_constraintStart_toEndOf="@id/tvIcon"
-        app:layout_constraintEnd_toStartOf="@id/btnDelete"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="I want to build a fitness tracking app with..." />
 
     <!-- Bottom divider -->
     <View
         android:layout_width="0dp"
         android:layout_height="0.5dp"
+        android:layout_marginStart="68dp"
         android:background="@color/forge_on_surface_variant"
         android:alpha="0.15"
         app:layout_constraintBottom_toBottomOf="parent"

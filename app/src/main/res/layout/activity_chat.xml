@@ -51,16 +51,7 @@
             android:maxLines="1"
             android:ellipsize="end" />
 
-        <!-- FORGE wordmark -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⬡ FORGE"
-            android:textColor="@color/forge_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.06"
-            android:layout_marginEnd="12dp" />
+        <!-- Removed redundant FORGE wordmark -->
 
         <!-- Sign-out -->
         <ImageButton

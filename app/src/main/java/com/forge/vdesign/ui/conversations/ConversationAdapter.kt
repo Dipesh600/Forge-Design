@@ -32,13 +32,11 @@ class ConversationAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView   = itemView.findViewById(R.id.tvTitle)
-        private val tvPreview: TextView = itemView.findViewById(R.id.tvPreview)
         private val tvTime: TextView    = itemView.findViewById(R.id.tvTime)
         private val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
 
         fun bind(convo: Conversation) {
             tvTitle.text   = convo.title.ifBlank { "New Chat" }
-            tvPreview.text = convo.title.ifBlank { "Tap to continue…" }
             tvTime.text    = formatTime(convo.updatedAt)
 
             itemView.setOnClickListener { onOpen(convo) }
