@@ -65,6 +65,88 @@
 
         </LinearLayout>
 
+        <!-- Empty State (Claude style) -->
+        <LinearLayout
+            android:id="@+id/chatEmptyState"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/chatTopBar"
+            app:layout_constraintBottom_toTopOf="@+id/inputContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✦ Hello, Designer"
+                android:textColor="@color/forge_on_surface"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="How can FORGE help you today?"
+                android:textColor="@color/forge_on_surface_variant"
+                android:textSize="18sp"
+                android:layout_marginBottom="36dp"/>
+
+            <!-- Chips -->
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/chip1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📱 SaaS Dashboard"
+                        android:background="@drawable/bg_chip"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:textColor="@color/forge_on_surface"
+                        android:layout_marginEnd="12dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                    
+                    <TextView
+                        android:id="@+id/chip2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🛍️ E-commerce Product"
+                        android:background="@drawable/bg_chip"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:textColor="@color/forge_on_surface"
+                        android:layout_marginEnd="12dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/chip3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏋️ Fitness Tracker"
+                        android:background="@drawable/bg_chip"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:textColor="@color/forge_on_surface"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+
         <!-- Message list -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chatRecyclerView"

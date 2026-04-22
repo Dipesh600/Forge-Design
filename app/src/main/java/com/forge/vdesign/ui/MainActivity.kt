@@ -87,11 +87,26 @@ class MainActivity : AppCompatActivity() {
         val sendBtn: ImageButton = findViewById(R.id.sendButton)
         val btnSignOutDrawer: View = findViewById(R.id.btnSignOutDrawer)
         val btnNewChatTop: ImageButton = findViewById(R.id.btnNewChatTop)
+        val chatEmptyState: View = findViewById(R.id.chatEmptyState)
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
 
         // Setup Adapters
         setupHistoryAdapter(rvConversations, drawerLayout)
         setupChatAdapter()
+
+        // Prompt chips — tap to pre-fill input and send
+        val chipPrompts = mapOf(
+            R.id.chip1 to "Design a modern SaaS analytics dashboard with charts and KPI cards",
+            R.id.chip2 to "Design a premium e-commerce product detail page with a clean, minimal layout",
+            R.id.chip3 to "Design a fitness tracker home screen with workout stats and progress rings"
+        )
+        chipPrompts.forEach { (id, prompt) ->
+            findViewById<TextView>(id).setOnClickListener {
+                inputField.setText(prompt)
+                inputField.setSelection(prompt.length)
+                inputField.requestFocus()
+            }
+        }
 
         // Button Listeners
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
@@ -115,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 
         // Observer loops
         observeConversationList(tvUserDisplayName)
-        observeActiveChat(tvConversationTitle, sendBtn, inputField)
+        observeActiveChat(tvConversationTitle, sendBtn, inputField, chatEmptyState)
     }
 
     private fun setupHistoryAdapter(rv: RecyclerView, drawerLayout: DrawerLayout) {
@@ -193,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeActiveChat(tvTitle: TextView, sendBtn: ImageButton, input: EditText) {
+    private fun observeActiveChat(tvTitle: TextView, sendBtn: ImageButton, input: EditText, emptyState: View) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 chatViewModel.uiState.collect { state ->
@@ -236,12 +251,19 @@ class MainActivity : AppCompatActivity() {
                         streamingId = null
                     }
 
+                    val allMessages = state.persistedMessages + liveSuffix
+                    val isEmpty = allMessages.isEmpty() && !state.isSending && !state.isStreaming
+
+                    // Toggle empty state welcome screen vs live chat
+                    emptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                    chatRecyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
                     // Only enable input if not busy loading/streaming
                     val busy = state.isSending || state.isStreaming
                     sendBtn.isEnabled = !busy
                     sendBtn.alpha = if (busy) 0.4f else 1.0f
                     
-                    chatAdapter.submitList(state.persistedMessages + liveSuffix, streamingId)
+                    chatAdapter.submitList(allMessages, streamingId)
 
                     if (state.error != null) {
                         Toast.makeText(this@MainActivity, state.error, Toast.LENGTH_LONG).show()

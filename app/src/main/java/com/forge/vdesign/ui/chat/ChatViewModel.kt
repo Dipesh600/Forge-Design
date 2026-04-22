@@ -128,7 +128,6 @@ class ChatViewModel @Inject constructor(
 
     private fun initConversation(conversationId: String) {
         viewModelScope.launch {
-            chatRepository.getOrCreateConversation(conversationId)
             // Restore agent history from persisted messages so LLM has full context
             restoreAgentHistory(conversationId)
             observeMessages(conversationId)
@@ -225,6 +224,9 @@ class ChatViewModel @Inject constructor(
 
         val backgroundScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO)
         backgroundScope.launch {
+            // 0. Lazily create the conversation in Room if this is the very first message
+            chatRepository.getOrCreateConversation(conversationId)
+            
             // 1. Persist user message immediately
             chatRepository.persistUserMessage(conversationId, text)
 
