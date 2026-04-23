@@ -383,6 +383,25 @@ class ChatRepositoryImpl @Inject constructor(
         title       = title,
         createdAt   = createdAt,
         updatedAt   = updatedAt,
-        totalTokens = totalTokens
+        totalTokens = totalTokens,
+        isStarred   = isStarred
     )
+
+    override suspend fun renameConversation(conversationId: String, newTitle: String): ForgeResult<Unit> {
+        return try {
+            conversationDao.updateTitle(conversationId, newTitle.trim(), System.currentTimeMillis())
+            ForgeResult.Success(Unit)
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException(e.message ?: "Error", e))
+        }
+    }
+
+    override suspend fun starConversation(conversationId: String, starred: Boolean): ForgeResult<Unit> {
+        return try {
+            conversationDao.updateStarred(conversationId, starred)
+            ForgeResult.Success(Unit)
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException(e.message ?: "Error", e))
+        }
+    }
 }

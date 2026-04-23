@@ -11,4 +11,5 @@ data class Conversation(
     val updatedAt: Long = System.currentTimeMillis(),
     val totalTokens: Int = 0,
     val messageCount: Int = 0,
+    val isStarred: Boolean = false
 )

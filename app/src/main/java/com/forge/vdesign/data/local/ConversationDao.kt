@@ -1,5 +1,6 @@
 package com.forge.vdesign.data.local
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -26,5 +27,8 @@ interface ConversationDao {
 
     @Query("DELETE FROM conversations WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("UPDATE conversations SET is_starred = :starred, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateStarred(id: String, starred: Boolean, updatedAt: Long = System.currentTimeMillis())
 }
 

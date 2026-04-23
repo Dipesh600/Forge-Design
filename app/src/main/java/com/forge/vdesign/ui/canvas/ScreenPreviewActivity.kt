@@ -26,10 +26,22 @@ class ScreenPreviewActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_SCREEN = "EXTRA_SCREEN"
+        private const val EXTRA_SIMPLE_NAME = "EXTRA_SIMPLE_NAME"
+        private const val EXTRA_SIMPLE_HTML = "EXTRA_SIMPLE_HTML"
+        private const val EXTRA_SIMPLE_IMG = "EXTRA_SIMPLE_IMG"
 
         fun launch(context: Context, screen: GeneratedScreen) {
             val intent = Intent(context, ScreenPreviewActivity::class.java).apply {
                 putExtra(EXTRA_SCREEN, screen)
+            }
+            context.startActivity(intent)
+        }
+
+        fun launchSimple(context: Context, name: String, htmlUrl: String?, screenshotUrl: String?) {
+            val intent = Intent(context, ScreenPreviewActivity::class.java).apply {
+                putExtra(EXTRA_SIMPLE_NAME, name)
+                putExtra(EXTRA_SIMPLE_HTML, htmlUrl)
+                putExtra(EXTRA_SIMPLE_IMG, screenshotUrl)
             }
             context.startActivity(intent)
         }
@@ -50,25 +62,29 @@ class ScreenPreviewActivity : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getParcelableExtra(EXTRA_SCREEN)
         }
 
-        if (screen == null) { finish(); return }
+        val name = screen?.screenName ?: intent.getStringExtra(EXTRA_SIMPLE_NAME)
+        val htmlUrl = screen?.htmlUrl ?: intent.getStringExtra(EXTRA_SIMPLE_HTML)
+        val screenshotUrl = screen?.screenshotUrl ?: intent.getStringExtra(EXTRA_SIMPLE_IMG)
+        
+        if (name == null) { finish(); return }
 
-        binding.previewToolbar.title = screen.screenName
+        binding.previewToolbar.title = name
 
         when {
-            !screen.htmlUrl.isNullOrBlank() -> {
+            !htmlUrl.isNullOrBlank() -> {
                 // If we also have a screenshot, keep it around as a fallback just in case
-                if (!screen.screenshotUrl.isNullOrBlank()) {
+                if (!screenshotUrl.isNullOrBlank()) {
                     binding.btnOpenInteractive?.visibility = View.VISIBLE
                     binding.btnOpenInteractive?.text = "Show Screenshot Instead"
                     binding.btnOpenInteractive?.setOnClickListener {
                         binding.previewWebView.visibility = View.GONE
                         binding.btnOpenInteractive?.visibility = View.GONE
-                        loadImage(screen.screenshotUrl)
+                        loadImage(screenshotUrl)
                     }
                 }
-                loadWebView(screen.htmlUrl)
+                loadWebView(htmlUrl)
             }
-            !screen.screenshotUrl.isNullOrBlank() -> loadImage(screen.screenshotUrl)
+            !screenshotUrl.isNullOrBlank() -> loadImage(screenshotUrl)
             else -> {
                 binding.previewEmpty.visibility = View.VISIBLE
                 Toast.makeText(this, "No preview URL yet — still generating", Toast.LENGTH_LONG).show()

@@ -69,4 +69,8 @@ interface ChatRepository {
         htmlUrl: String?,
         projectId: String?
     ): ForgeResult<ChatMessage>
+
+    suspend fun renameConversation(conversationId: String, newTitle: String): ForgeResult<Unit>
+
+    suspend fun starConversation(conversationId: String, starred: Boolean): ForgeResult<Unit>
 }

@@ -69,6 +69,18 @@ class ConversationListViewModel @Inject constructor(
         }
     }
 
+    fun renameConversation(conversationId: String, newTitle: String) {
+        viewModelScope.launch {
+            chatRepository.renameConversation(conversationId, newTitle)
+        }
+    }
+
+    fun starConversation(conversationId: String, starred: Boolean) {
+        viewModelScope.launch {
+            chatRepository.starConversation(conversationId, starred)
+        }
+    }
+
     fun signOut() {
         authRepository.signOut()
         _state.value = _state.value.copy(isSignedOut = true)

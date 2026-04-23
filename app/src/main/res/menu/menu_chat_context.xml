@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_new_chat"
+        android:title="New Chat"
+        android:icon="@android:drawable/ic_input_add" />
+
+    <item
+        android:id="@+id/action_rename"
+        android:title="Rename"
+        android:icon="@drawable/ic_edit" />
+
+    <item
+        android:id="@+id/action_star"
+        android:title="Star"
+        android:icon="@drawable/ic_star" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:title="Delete"
+        android:icon="@android:drawable/ic_menu_delete" />
+
+</menu>

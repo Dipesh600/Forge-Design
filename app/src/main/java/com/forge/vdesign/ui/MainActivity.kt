@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -30,6 +31,7 @@ import com.forge.vdesign.ui.chat.ChatAdapter
 import com.forge.vdesign.ui.chat.ChatViewModel
 import com.forge.vdesign.ui.conversations.ConversationAdapter
 import com.forge.vdesign.ui.conversations.ConversationListViewModel
+import com.forge.vdesign.ui.workspace.WorkspaceBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -86,7 +88,8 @@ class MainActivity : AppCompatActivity() {
         val inputField: EditText = findViewById(R.id.messageInput)
         val sendBtn: ImageButton = findViewById(R.id.sendButton)
         val btnSignOutDrawer: View = findViewById(R.id.btnSignOutDrawer)
-        val btnNewChatTop: ImageButton = findViewById(R.id.btnNewChatTop)
+        val btnWorkspace: ImageButton = findViewById(R.id.btnWorkspace)
+        val btnChatMenu: ImageButton = findViewById(R.id.btnChatMenu)
         val chatEmptyState: View = findViewById(R.id.chatEmptyState)
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
 
@@ -111,9 +114,71 @@ class MainActivity : AppCompatActivity() {
         // Button Listeners
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
         
-        btnNewChatTop.setOnClickListener {
-            chatViewModel.switchConversation(null)
-            drawerLayout.closeDrawers()
+        btnWorkspace.setOnClickListener {
+            val state = chatViewModel.uiState.value
+            if (state.conversationId.isEmpty()) {
+                Toast.makeText(this, "Start a chat first.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val screens = state.persistedMessages.filter { it.isScreenCard }
+            WorkspaceBottomSheet().apply {
+                // Must show first before calling bind(), or hack a bundle. Actually better to just do it in onViewCreated.
+                // But passing data directly here requires the view to exist. Let's pass via companion object or setter before show?
+                // Calling show() attaches it, but view might not be created synchronously. We can pass via bundle in a real app,
+                // but let's just use a setter that caches the data if view is null! Wait, let's fix the bottom sheet bind to handle it.
+            }.apply {
+                this.pendingScreens = screens
+                this.pendingProjectTitle = state.conversationTitle
+            }.show(supportFragmentManager, WorkspaceBottomSheet.TAG)
+        }
+
+        btnChatMenu.setOnClickListener { view ->
+            val popup = PopupMenu(this, view)
+            popup.menuInflater.inflate(R.menu.menu_chat_context, popup.menu)
+            
+            // Re-find the active conversation to know its starred state if we want to toggle the title, but wait, DB takes care of that.
+            val activeConvoId = chatViewModel.uiState.value.conversationId
+            val title = chatViewModel.uiState.value.conversationTitle
+            
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_new_chat -> {
+                        chatViewModel.switchConversation(null)
+                        drawerLayout.closeDrawers()
+                        true
+                    }
+                    R.id.action_rename -> {
+                        if (activeConvoId.isNotEmpty()) showRenameDialog(activeConvoId, title)
+                        true
+                    }
+                    R.id.action_star -> {
+                        if (activeConvoId.isNotEmpty()) {
+                            // We don't have the exact current starred state easily without searching the history list, 
+                            // so we'll just search it from the conversationListViewModel state!
+                            val isCurrentlyStarred = conversationListViewModel.state.value.conversations.find { it.id == activeConvoId }?.isStarred ?: false
+                            conversationListViewModel.starConversation(activeConvoId, !isCurrentlyStarred)
+                            Toast.makeText(this, if (isCurrentlyStarred) "Un-starred" else "Starred", Toast.LENGTH_SHORT).show()
+                        }
+                        true
+                    }
+                    R.id.action_delete -> {
+                        if (activeConvoId.isNotEmpty()) {
+                            android.app.AlertDialog.Builder(this)
+                                .setTitle("Delete Chat?")
+                                .setMessage("This will wipe all messages and generated screens.")
+                                .setPositiveButton("Delete") { _, _ ->
+                                    conversationListViewModel.deleteConversation(activeConvoId)
+                                    chatViewModel.switchConversation(null)
+                                }
+                                .setNegativeButton("Cancel", null)
+                                .show()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
         }
 
         sendBtn.setOnClickListener {
@@ -206,6 +271,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showRenameDialog(conversationId: String, currentTitle: String) {
+        val input = EditText(this).apply {
+            setText(currentTitle)
+            setSelection(currentTitle.length)
+            setSingleLine()
+        }
+        
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Rename Chat")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val newTitle = input.text.toString().trim()
+                if (newTitle.isNotBlank()) {
+                    conversationListViewModel.renameConversation(conversationId, newTitle)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun observeActiveChat(tvTitle: TextView, sendBtn: ImageButton, input: EditText, emptyState: View) {
