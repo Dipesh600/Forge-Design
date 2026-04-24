@@ -14,5 +14,7 @@ data class ConversationEntity(
     val updatedAt: Long = System.currentTimeMillis(),
     val totalTokens: Int = 0,
     @ColumnInfo(name = "is_starred", defaultValue = "0")
-    val isStarred: Boolean = false
+    val isStarred: Boolean = false,
+    @ColumnInfo(name = "user_id", defaultValue = "")
+    val userId: String = ""
 )

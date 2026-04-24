@@ -32,7 +32,7 @@ object AppModule {
             ForgeDatabase::class.java,
             "forge_database"
         )
-            .addMigrations(ForgeDatabase.MIGRATION_1_2, ForgeDatabase.MIGRATION_2_3)
+            .addMigrations(ForgeDatabase.MIGRATION_1_2, ForgeDatabase.MIGRATION_2_3, ForgeDatabase.MIGRATION_3_4)
             .fallbackToDestructiveMigration() // dev safety net — remove before prod release
             .build()
     }

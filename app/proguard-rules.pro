@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# ── KEEP GSON AND NETWORK / MCP MODELS ──────────────────────
+-keepattributes *Annotation*, Signature
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.** { *; }
+
+# Keep all data models so Gson serialization doesn't break in release builds
+-keep class com.forge.vdesign.mcp.** { *; }
+-keep class com.forge.vdesign.domain.model.** { *; }
+-keep class com.forge.vdesign.skills.models.** { *; }
+-keep class com.forge.vdesign.brain.** { *; }

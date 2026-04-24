@@ -13,6 +13,7 @@ import com.forge.vdesign.domain.model.DesignBrief
 import com.forge.vdesign.domain.model.ForgeException
 import com.forge.vdesign.domain.model.ForgeResult
 import com.forge.vdesign.domain.model.MessageRole
+import com.forge.vdesign.domain.repository.AuthRepository
 import com.forge.vdesign.domain.repository.ChatRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
@@ -50,6 +51,7 @@ class ChatRepositoryImpl @Inject constructor(
     private val messageDao: MessageDao,
     private val conversationDao: ConversationDao,
     private val miniMaxClient: MiniMaxClient,
+    private val authRepository: AuthRepository,
     private val gson: Gson
 ) : ChatRepository {
 
@@ -154,9 +156,10 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun getOrCreateConversation(conversationId: String): ForgeResult<Conversation> {
         return try {
+            val uid = authRepository.currentUser?.uid ?: ""
             var entity = conversationDao.loadById(conversationId)
             if (entity == null) {
-                entity = ConversationEntity(id = conversationId, title = "New Chat")
+                entity = ConversationEntity(id = conversationId, title = "New Chat", userId = uid)
                 conversationDao.insert(entity)
             }
             ForgeResult.Success(entity.toDomainModel())
@@ -165,8 +168,10 @@ class ChatRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun observeAllConversations(): Flow<List<Conversation>> =
-        conversationDao.loadAll().map { it.map { e -> e.toDomainModel() } }
+    override fun observeAllConversations(): Flow<List<Conversation>> {
+        val uid = authRepository.currentUser?.uid ?: return kotlinx.coroutines.flow.flowOf(emptyList())
+        return conversationDao.loadAll(uid).map { it.map { e -> e.toDomainModel() } }
+    }
 
     override suspend fun deleteConversation(conversationId: String): ForgeResult<Unit> {
         return try {
@@ -299,12 +304,12 @@ class ChatRepositoryImpl @Inject constructor(
      */
     private suspend fun autoTitleConversation(conversationId: String, firstMessage: String) {
         try {
-            val existing = conversationDao.loadById(conversationId) ?: return
-            if (existing.title == "New Chat" || existing.title.isBlank()) {
-                val title = firstMessage.take(42).let {
-                    if (firstMessage.length > 42) "$it…" else it
-                }
-                conversationDao.updateTitle(conversationId, title)
+            val entity = conversationDao.loadById(conversationId)
+            if (entity != null && (entity.title == "New Chat" || entity.title.isEmpty())) {
+                val shortText = firstMessage.take(40).replace("\n", " ").trim()
+                val safeTitle = if (shortText.length == 40) "$shortText..." else shortText
+                val uid = authRepository.currentUser?.uid ?: ""
+                conversationDao.update(entity.copy(title = safeTitle, userId = uid))
             }
         } catch (e: Exception) {
             android.util.Log.w("FORGE_CHAT", "Auto-title failed: ${e.message}")

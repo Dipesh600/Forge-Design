@@ -13,8 +13,8 @@ interface ConversationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(conversation: ConversationEntity)
 
-    @Query("SELECT * FROM conversations ORDER BY updatedAt DESC")
-    fun loadAll(): Flow<List<ConversationEntity>>
+    @Query("SELECT * FROM conversations WHERE user_id = :userId ORDER BY updatedAt DESC")
+    fun loadAll(userId: String): Flow<List<ConversationEntity>>
 
     @Query("SELECT * FROM conversations WHERE id = :id")
     suspend fun loadById(id: String): ConversationEntity?
