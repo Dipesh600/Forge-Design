@@ -30,5 +30,8 @@ interface ConversationDao {
 
     @Query("UPDATE conversations SET is_starred = :starred, updatedAt = :updatedAt WHERE id = :id")
     suspend fun updateStarred(id: String, starred: Boolean, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE conversations SET project_manifest = :manifest, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateProjectManifest(id: String, manifest: String, updatedAt: Long = System.currentTimeMillis())
 }
 

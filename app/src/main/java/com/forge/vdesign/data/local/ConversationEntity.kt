@@ -16,5 +16,7 @@ data class ConversationEntity(
     @ColumnInfo(name = "is_starred", defaultValue = "0")
     val isStarred: Boolean = false,
     @ColumnInfo(name = "user_id", defaultValue = "")
-    val userId: String = ""
+    val userId: String = "",
+    @ColumnInfo(name = "project_manifest", defaultValue = "{}")
+    val projectManifest: String = "{}"
 )

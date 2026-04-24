@@ -47,6 +47,11 @@ For design questions and feedback, answer as a world-class design consultant.
 Use markdown lightly. Keep responses concise and punchy — no walls of text.
 Never break character. You are FORGE, not ChatGPT or MiniMax."""
 
+    private fun injectSpatialMemory(basePrompt: String, manifest: String): String {
+        if (manifest == "{}" || manifest.isEmpty()) return basePrompt
+        return "$basePrompt\n\n### SPATIAL MEMORY (PROJECT MANIFEST) ###\nYou have live access to the current project's generated screens. DO NOT suggest to generate a screen that already exists in this manifest unless the user explicitly wants to redesign/replace it. Use these IDs when referencing specific screens.\nMANIFEST:\n$manifest"
+    }
+
 class ChatRepositoryImpl @Inject constructor(
     private val messageDao: MessageDao,
     private val conversationDao: ConversationDao,
@@ -84,7 +89,10 @@ class ChatRepositoryImpl @Inject constructor(
 
         // 3. Build conversation context (last 12 messages, in correct order)
         val history = messageDao.loadRecentSync(conversationId, limit = 12)
-        val messages = mutableListOf(MiniMaxMessage("system", FORGE_SYSTEM_PROMPT))
+        val conversationEntity = conversationDao.loadById(conversationId)
+        val manifest = conversationEntity?.projectManifest ?: "{}"
+        
+        val messages = mutableListOf(MiniMaxMessage("system", injectSpatialMemory(FORGE_SYSTEM_PROMPT, manifest)))
         history.forEach { messages.add(MiniMaxMessage(it.role.lowercase(), it.content)) }
 
         // 4. Stream tokens
@@ -125,7 +133,10 @@ class ChatRepositoryImpl @Inject constructor(
             autoTitleConversation(conversationId, userMessage)
 
             val history = messageDao.loadRecentSync(conversationId, limit = 12)
-            val messages = mutableListOf(MiniMaxMessage("system", FORGE_SYSTEM_PROMPT))
+            val conversationEntity = conversationDao.loadById(conversationId)
+            val manifest = conversationEntity?.projectManifest ?: "{}"
+
+            val messages = mutableListOf(MiniMaxMessage("system", injectSpatialMemory(FORGE_SYSTEM_PROMPT, manifest)))
             history.forEach { messages.add(MiniMaxMessage(it.role.lowercase(), it.content)) }
 
             val response = miniMaxClient.chatCompletion(MiniMaxRequest(messages = messages))
@@ -287,7 +298,21 @@ class ChatRepositoryImpl @Inject constructor(
             )
             messageDao.insert(entity)
             conversationDao.loadById(conversationId)?.let {
-                conversationDao.update(it.copy(updatedAt = System.currentTimeMillis()))
+                val currentManifest = try { JSONObject(it.projectManifest) } catch (e: Exception) { JSONObject() }
+                currentManifest.put("active_projectId", projectId ?: "")
+                val screensArray = currentManifest.optJSONArray("generated_screens") ?: org.json.JSONArray()
+                
+                val newScreen = JSONObject().apply {
+                    put("name", screenName)
+                    put("id", "s_${screensArray.length() + 1}_${projectId ?: ""}")
+                }
+                screensArray.put(newScreen)
+                currentManifest.put("generated_screens", screensArray)
+
+                conversationDao.update(it.copy(
+                    updatedAt = System.currentTimeMillis(),
+                    projectManifest = currentManifest.toString()
+                ))
             }
             ForgeResult.Success(entity.toDomainModel())
         } catch (e: Exception) {

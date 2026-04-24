@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [MessageEntity::class, ConversationEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class ForgeDatabase : RoomDatabase() {
@@ -33,6 +33,13 @@ abstract class ForgeDatabase : RoomDatabase() {
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE conversations ADD COLUMN user_id TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        /** v4 → v5: Add `project_manifest` column to conversations table. */
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE conversations ADD COLUMN project_manifest TEXT NOT NULL DEFAULT '{}'")
             }
         }
     }
