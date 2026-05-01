@@ -1,0 +1,168 @@
+{
+  "id": "emotional-design-v1",
+  "name": "Emotional Design",
+  "version": "3.0",
+  "category": "emotional",
+  "description": "Governs decisions related to user delight, habit-building, onboarding, engagement loops, animations, micro-interactions, and the overall \"feel\" and personality of a product. Use this skill whenever the user asks about visceral first impressions, making the app feel \"premium\" or \"fun\", building engagement and retention (the Hook model), designing ethical variable rewards, or ensuring the product's identity aligns with the user's self-image.",
+  "keywords": [
+    "delight",
+    "engagement",
+    "onboarding",
+    "premium",
+    "feel",
+    "personality",
+    "animation"
+  ],
+  "sourceBooks": [
+    "Emotional Design (Norman)",
+    "The Hook Model",
+    "Laws of UX"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "emotional-design-v1-r1",
+      "rule": "Ensure the initial visual impression of the interface conveys high quality through harmonious colors, crisp typography, and balanced spacing before the user even interacts with it.",
+      "weight": 1.0,
+      "why": "The visceral level operates pre-consciously. Users judge a product's credibility and quality within 50 milliseconds based purely on aesthetics.",
+      "check": "Does the interface look immediately premium and professional at a glance, without requiring the user to read or click anything?",
+      "bad": "A dense, gray data table with unaligned text that looks like a legacy database.",
+      "good": "A clean, spacious dashboard with vibrant, intentional typography that invites interaction."
+    },
+    {
+      "id": "emotional-design-v1-r2",
+      "rule": "Inject small moments of aesthetic delight (e.g., smooth entrance animations, friendly empty states) to put the user in a positive state of mind.",
+      "weight": 0.97,
+      "why": "Positive affect makes users more tolerant of friction. If they encounter a minor bug or complex task while in a good mood, they are less likely to abandon the flow.",
+      "check": "Does the interface include elements designed purely to create a brief moment of joy or satisfaction?",
+      "bad": "A sterile, instantaneous state change when an item is deleted.",
+      "good": "A satisfying, physics-based \"whoosh\" animation when an item is successfully archived."
+    },
+    {
+      "id": "emotional-design-v1-r3",
+      "rule": "Ensure that all primary user goals can be accomplished without cognitive strain, ambiguous controls, or physical fatigue.",
+      "weight": 0.94,
+      "why": "Behavioral design is entirely about use and performance. Frustration here poisons both the visceral and reflective layers.",
+      "check": "Is the primary action on the screen immediately obvious, reachable, and responsive?",
+      "bad": "A checkout button hidden in a hamburger menu.",
+      "good": "A persistent, sticky, full-width \"Checkout\" button at the bottom of the screen."
+    },
+    {
+      "id": "emotional-design-v1-r4",
+      "rule": "Align the product's tone, voice, and visual personality with the self-image the target user wants to project.",
+      "weight": 0.91,
+      "why": "People use products to signal who they are. A financial app for serious investors must reflect authority; a habit tracker for teens must reflect playfulness.",
+      "check": "Does the visual style and copy reinforce the user's desired identity?",
+      "bad": "Using Comic Sans and confetti animations in an enterprise banking application.",
+      "good": "Using elegant serif typography and muted tones in a high-end luxury shopping app."
+    },
+    {
+      "id": "emotional-design-v1-r5",
+      "rule": "Design specific micro-interactions (loaders, toggles, success states) to exhibit a consistent brand personality.",
+      "weight": 0.88,
+      "why": "Personality makes digital products feel human. Small, thoughtful details have an outsized impact on the user's perception of quality and care.",
+      "check": "Do the micro-interactions have a distinct \"feel\" that aligns with the brand's voice?",
+      "bad": "Using a default system spinner for loading states in a playful children's app.",
+      "good": "Animating the app's mascot running on a wheel during a loading state."
+    },
+    {
+      "id": "emotional-design-v1-r6",
+      "rule": "Map the core action of the application to a specific internal emotional trigger (e.g., feeling bored, uncertain, or lonely) so the user instinctively turns to the app.",
+      "weight": 0.85,
+      "why": "External triggers (push notifications) are easily ignored or disabled. True habits form when a negative emotion automatically triggers the desire to use the product.",
+      "check": "Can you clearly identify the specific negative emotion the user feels immediately before opening the app?",
+      "bad": "Sending daily \"Don't forget to log your water!\" push notifications without connecting to a real user need.",
+      "good": "Designing a social feed that users instinctively open the moment they feel a pang of boredom in a waiting room."
+    },
+    {
+      "id": "emotional-design-v1-r7",
+      "rule": "Reduce the number of steps required to complete the core habit-forming action to the absolute minimum, removing any unnecessary cognitive or physical effort.",
+      "weight": 0.82,
+      "why": "According to the Fogg Behavior Model, for an action to occur, motivation and ability must be high. Since motivation fluctuates, ability (simplicity) must always remain extraordinarily high.",
+      "check": "Can the user complete the core action of the app with zero cognitive effort and minimal clicks?",
+      "bad": "Requiring a user to log in, navigate to a tab, click a plus button, and fill out a 5-field form just to log a thought.",
+      "good": "Opening directly to a camera view so the user can take a photo in one tap."
+    },
+    {
+      "id": "emotional-design-v1-r8",
+      "rule": "Ensure the outcome of the user's action provides a reward that is positive but unpredictable in its exact content, size, or timing.",
+      "weight": 0.79,
+      "why": "Predictable rewards lose their appeal quickly. The brain's dopamine system is highly stimulated by the *anticipation* of an uncertain reward (the slot machine effect).",
+      "check": "When the user performs the core action, is there an element of mystery or variability in what they receive back?",
+      "bad": "A dashboard that looks exactly the same every time the user opens it.",
+      "good": "A social feed where the user pulls to refresh, never knowing exactly what new, interesting content will appear."
+    },
+    {
+      "id": "emotional-design-v1-r9",
+      "rule": "Categorize and utilize the three types of variable rewards appropriately: Rewards of the Tribe (social validation), Rewards of the Hunt (information/resources), and Rewards of the Self (mastery/completion).",
+      "weight": 0.76,
+      "why": "Different products require different reward structures. Social apps need Tribe rewards; utility apps need Self rewards.",
+      "check": "Does the reward type match the user's core motivation?",
+      "bad": "Adding a generic leaderboard (Tribe) to a personal journaling app where privacy is paramount.",
+      "good": "Using a satisfying, variable animation sequence when checking off a difficult to-do item (Self)."
+    },
+    {
+      "id": "emotional-design-v1-r10",
+      "rule": "Use variable rewards to help users achieve *their* goals, not solely to extract attention or money against the user's best interests.",
+      "weight": 0.73,
+      "why": "Deceptive or coercive loops destroy trust at the Reflective level, leading to eventual churn and brand damage.",
+      "check": "Does the variable reward ultimately serve a goal the user genuinely wants to achieve?",
+      "bad": "A hidden \"loot box\" mechanic that obscures the cost of acquiring a necessary in-app item.",
+      "good": "A language learning app that provides variable encouragement and unexpected bonus lessons when the user studies consiste"
+    },
+    {
+      "id": "emotional-design-v1-r11",
+      "rule": "Ask the user to perform a small, low-friction action that improves the service for their next visit (e.g., liking a post, saving a preference, adding a friend).",
+      "weight": 0.7,
+      "why": "The investment phase loads the next trigger and stores value in the product, making it harder to abandon.",
+      "check": "Does the app ask the user to input something that makes the app better tailored to them tomorrow?",
+      "bad": "An app that never asks for preferences, treating the user like a stranger every time they open it.",
+      "good": "A music app asking the user to \"heart\" a song, which immediately improves their personalized playlist."
+    },
+    {
+      "id": "emotional-design-v1-r12",
+      "rule": "Allow users to customize their environment or input personal data so they feel a sense of ownership over the product.",
+      "weight": 0.67,
+      "why": "People place disproportionately high value on things they helped create or configure.",
+      "check": "Is there a meaningful way for the user to make the interface or the data feel like \"theirs\"?",
+      "bad": "A rigid dashboard with fixed widgets that the user cannot rearrange.",
+      "good": "Allowing users to upload a custom avatar and select a workspace color theme during onboarding."
+    },
+    {
+      "id": "emotional-design-v1-r13",
+      "rule": "Ensure the user's investment sets the stage for an external trigger that will bring them back (e.g., sending a message loads the trigger for a reply notification).",
+      "weight": 0.64,
+      "why": "A habit loop must be a closed circuit. The investment must naturally lead back to the start of the loop.",
+      "check": "Does the action the user just took guarantee they will have a reason to return?",
+      "bad": "A user completes a task list and the app just says \"Done,\" providing no hook for the next session.",
+      "good": "After completing a task, the app asks, \"What do you want to tackle tomorrow?\" and sets a reminder."
+    },
+    {
+      "id": "emotional-design-v1-r14",
+      "rule": "Prioritize fixing severe behavioral blockers, but recognize that users will forgive minor usability friction if the visceral and reflective experience is overwhelmingly positive.",
+      "weight": 0.61,
+      "why": "A beautiful, emotionally resonant design creates a halo effect that compensates for minor UX quirks.",
+      "check": "Are you over-optimizing a minor flow at the expense of the product's overall character and delight?",
+      "bad": "Stripping out a delightful transition animation because it takes 200ms longer, making the app feel dead.",
+      "good": "Keeping a charming, custom-illustrated loading screen even if it slightly delays the perception of performance."
+    },
+    {
+      "id": "emotional-design-v1-r15",
+      "rule": "Never sacrifice the Behavioral level for the Visceral level. An interface must be functional first, and beautiful second.",
+      "weight": 0.58,
+      "why": "Ugly but functional will eventually be replaced by beautiful and functional, but beautiful and broken will be abandoned immediately.",
+      "check": "Does the aesthetic design interfere with legibility, contrast, or clickability?",
+      "bad": "Using a gorgeous, ultra-thin, low-contrast font that users cannot actually read.",
+      "good": "Using a highly legible, high-contrast typeface that is also elegantly typeset and visually striking."
+    },
+    {
+      "id": "emotional-design-v1-r16",
+      "rule": "Over-index design effort on the most intense emotional moment of the user journey (the peak) and the final moment (the end).",
+      "weight": 0.55,
+      "why": "The Peak-End rule dictates that users judge an experience almost entirely on its peak and its conclusion, forgetting the average moments.",
+      "check": "Is the final screen of the core flow designed to leave a lasting, positive emotional impression?",
+      "bad": "A checkout flow that ends with a plain text \"Transaction successful\" message.",
+      "good": "A checkout flow that ends with a celebratory animation and a warm \"You're all set! We're packing your order right now.\" "
+    }
+  ]
+}

@@ -29,19 +29,22 @@ class ScreenPreviewActivity : AppCompatActivity() {
         private const val EXTRA_SIMPLE_NAME = "EXTRA_SIMPLE_NAME"
         private const val EXTRA_SIMPLE_HTML = "EXTRA_SIMPLE_HTML"
         private const val EXTRA_SIMPLE_IMG = "EXTRA_SIMPLE_IMG"
+        private const val EXTRA_DESIGN_SYSTEM = "EXTRA_DESIGN_SYSTEM"
 
-        fun launch(context: Context, screen: GeneratedScreen) {
+        fun launch(context: Context, screen: GeneratedScreen, designSystem: String = "", options: Bundle? = null) {
             val intent = Intent(context, ScreenPreviewActivity::class.java).apply {
                 putExtra(EXTRA_SCREEN, screen)
+                putExtra(EXTRA_DESIGN_SYSTEM, designSystem)
             }
-            context.startActivity(intent)
+            context.startActivity(intent, options)
         }
 
-        fun launchSimple(context: Context, name: String, htmlUrl: String?, screenshotUrl: String?) {
+        fun launchSimple(context: Context, name: String, htmlUrl: String?, screenshotUrl: String?, designSystem: String = "") {
             val intent = Intent(context, ScreenPreviewActivity::class.java).apply {
                 putExtra(EXTRA_SIMPLE_NAME, name)
                 putExtra(EXTRA_SIMPLE_HTML, htmlUrl)
                 putExtra(EXTRA_SIMPLE_IMG, screenshotUrl)
+                putExtra(EXTRA_DESIGN_SYSTEM, designSystem)
             }
             context.startActivity(intent)
         }
@@ -50,17 +53,22 @@ class ScreenPreviewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScreenPreviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(android.view.Window.FEATURE_ACTIVITY_TRANSITIONS)
         super.onCreate(savedInstanceState)
         binding = ActivityScreenPreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.previewToolbar.setNavigationOnClickListener { finish() }
 
         val screen: GeneratedScreen? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_SCREEN, GeneratedScreen::class.java)
         } else {
             @Suppress("DEPRECATION") intent.getParcelableExtra(EXTRA_SCREEN)
         }
+
+        if (screen != null) {
+            androidx.core.view.ViewCompat.setTransitionName(binding.previewImage, "canvas_transition_${screen.screenId}")
+        }
+
+        binding.previewToolbar.setNavigationOnClickListener { supportFinishAfterTransition() }
 
         val name = screen?.screenName ?: intent.getStringExtra(EXTRA_SIMPLE_NAME)
         val htmlUrl = screen?.htmlUrl ?: intent.getStringExtra(EXTRA_SIMPLE_HTML)
@@ -70,16 +78,26 @@ class ScreenPreviewActivity : AppCompatActivity() {
 
         binding.previewToolbar.title = name
 
+        val designSystem = intent.getStringExtra(EXTRA_DESIGN_SYSTEM)
+
         when {
             !htmlUrl.isNullOrBlank() -> {
-                // If we also have a screenshot, keep it around as a fallback just in case
+                // If we also have a screenshot, show toggle button
                 if (!screenshotUrl.isNullOrBlank()) {
                     binding.btnOpenInteractive?.visibility = View.VISIBLE
-                    binding.btnOpenInteractive?.text = "Show Screenshot Instead"
+                    binding.btnOpenInteractive?.text = "Switch to Screenshot"
+                    var showingHtml = true
                     binding.btnOpenInteractive?.setOnClickListener {
-                        binding.previewWebView.visibility = View.GONE
-                        binding.btnOpenInteractive?.visibility = View.GONE
-                        loadImage(screenshotUrl)
+                        if (showingHtml) {
+                            binding.previewWebView.visibility = View.GONE
+                            loadImage(screenshotUrl)
+                            binding.btnOpenInteractive?.text = "Switch to Interactive HTML"
+                        } else {
+                            binding.previewImage.visibility = View.GONE
+                            loadWebView(htmlUrl)
+                            binding.btnOpenInteractive?.text = "Switch to Screenshot"
+                        }
+                        showingHtml = !showingHtml
                     }
                 }
                 loadWebView(htmlUrl)
@@ -90,6 +108,47 @@ class ScreenPreviewActivity : AppCompatActivity() {
                 Toast.makeText(this, "No preview URL yet — still generating", Toast.LENGTH_LONG).show()
             }
         }
+
+        binding.btnViewReasoning.setOnClickListener {
+            val reasoning = screen?.designReasoning
+            if (reasoning.isNullOrEmpty()) {
+                Toast.makeText(this, "No design reasoning logged for this screen.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val content = reasoning.joinToString("\n\n") { "• ${it.decision}:\n  ${it.principle}" }
+            showBottomSheet("Design Reasoning", content)
+        }
+
+        binding.btnViewSystem.setOnClickListener {
+            if (designSystem.isNullOrBlank()) {
+                Toast.makeText(this, "No global design system set yet.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            showBottomSheet("Global Design System (DESIGN.md)", designSystem)
+        }
+
+        binding.btnShareScreen?.setOnClickListener {
+            val shareUrl = htmlUrl ?: screenshotUrl
+            if (shareUrl.isNullOrBlank()) {
+                Toast.makeText(this, "Nothing to share yet.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "FORGE Design: $name")
+                putExtra(Intent.EXTRA_TEXT, "Check out this screen from FORGE: $shareUrl")
+            }
+            startActivity(Intent.createChooser(shareIntent, "Share screen"))
+        }
+    }
+
+    private fun showBottomSheet(title: String, content: String) {
+        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val view = layoutInflater.inflate(com.forge.vdesign.R.layout.bottom_sheet_text, null)
+        view.findViewById<TextView>(com.forge.vdesign.R.id.tvSheetTitle).text = title
+        view.findViewById<TextView>(com.forge.vdesign.R.id.tvSheetContent).text = content
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
     }
 
     private fun loadWebView(url: String) {

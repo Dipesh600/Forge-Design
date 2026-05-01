@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/forge_background">
+
+    <!-- Background Hero Glow -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/bg_hero_glow"
+        android:scaleType="centerCrop"
+        android:alpha="0.4" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="60dp">
+
+            <!-- Top Header -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_back"
+                    app:tint="#FFFFFF"
+                    android:padding="12dp"
+                    android:scaleType="centerInside" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="COMMAND CENTER"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="0.2"
+                    android:alpha="0.8" />
+            </RelativeLayout>
+
+            <!-- Hero Identity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="40dp">
+
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="16dp">
+                    
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_glow_circle" />
+                        
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgProfile"
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_forge_logo_splash"
+                        android:padding="12dp"
+                        android:background="#1AFFFFFF"
+                        app:shapeAppearanceOverlay="@style/CircleImageView" />
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:text="PRO"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:fontFamily="sans-serif-black"
+                        android:background="@drawable/bg_screen_badge"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alex Rivers"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:fontFamily="sans-serif-black" />
+
+                <TextView
+                    android:id="@+id/tvUserEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="alex@forge.studio"
+                    android:textColor="#6B6B8A"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Stats Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_glass_card"
+                    android:padding="16dp"
+                    android:layout_marginEnd="8dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textColor="@color/forge_primary"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-black" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PROJECTS"
+                        android:textColor="#6B6B8A"
+                        android:textSize="9sp"
+                        android:fontFamily="sans-serif-black"
+                        android:letterSpacing="0.1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_glass_card"
+                    android:padding="16dp"
+                    android:layout_marginHorizontal="4dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="84"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-black" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SCREENS"
+                        android:textColor="#6B6B8A"
+                        android:textSize="9sp"
+                        android:fontFamily="sans-serif-black"
+                        android:letterSpacing="0.1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_glass_card"
+                    android:padding="16dp"
+                    android:layout_marginStart="8dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="98%"
+                        android:textColor="#4CAF50"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-black" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PRECISION"
+                        android:textColor="#6B6B8A"
+                        android:textSize="9sp"
+                        android:fontFamily="sans-serif-black"
+                        android:letterSpacing="0.1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Agent Archetypes Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AGENT ARCHETYPES"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="4dp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:clipToPadding="false"
+                android:layout_marginBottom="40dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Minimalist Card -->
+                    <LinearLayout
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_starter_card"
+                        android:padding="16dp"
+                        android:layout_marginEnd="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Minimalist"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-black" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Clean, whitespace-heavy, focus on typography."
+                            android:textColor="#6B6B8A"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ACTIVE"
+                            android:textColor="@color/forge_primary"
+                            android:textSize="10sp"
+                            android:fontFamily="sans-serif-black"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+
+                    <!-- Experimental Card -->
+                    <LinearLayout
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_glass_card"
+                        android:padding="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:alpha="0.6">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Futurist"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-black" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Glows, glassmorphism, and bold gradients."
+                            android:textColor="#6B6B8A"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SELECT"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:fontFamily="sans-serif-black"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Brand Kits Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BRAND KITS"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_glass_card"
+                android:padding="20dp"
+                android:layout_marginBottom="40dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_glass_pill_btn"
+                        android:backgroundTint="@color/forge_primary" />
+                    
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FORGE Default"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:fontFamily="sans-serif-bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Indigo, Violet, Slate"
+                            android:textColor="#6B6B8A"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EDIT"
+                        android:textColor="@color/forge_primary"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-black" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Actions -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Sign Out"
+                android:textColor="#FF5252"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-bold"
+                android:textAllCaps="false"
+                android:background="@drawable/bg_auth_input"
+                app:backgroundTint="@null"
+                app:cornerRadius="14dp"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FORGE Studio v1.0.4\nBuild 2026-05-01"
+                android:textColor="#3A3A4A"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:layout_marginTop="32dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

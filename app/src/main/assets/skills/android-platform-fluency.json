@@ -1,0 +1,241 @@
+{
+  "id": "android-platform-fluency-v1",
+  "name": "Android Platform Fluency",
+  "version": "3.0",
+  "category": "android",
+  "description": "Governs all platform-specific design decisions for modern Android applications. Use this skill whenever the user asks about Material Design 3 (M3) components, dynamic color, tonal elevation, typography scales, Android navigation patterns (Bottom Navigation vs Rail), edge-to-edge layouts (WindowInsets), adaptive UI (WindowSizeClass), predictive back gestures, or Android accessibility standards like minimum touch targets.",
+  "keywords": [
+    "android",
+    "mobile",
+    "app",
+    "material",
+    "m3",
+    "screen",
+    "design",
+    "ui"
+  ],
+  "sourceBooks": [
+    "Material Design 3",
+    "Android Developer Guidelines",
+    "WCAG 2.2"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "android-platform-fluency-v1-r1",
+      "rule": "Map all interface colors to the M3 token roles rather than absolute values. Use `Primary` for the most prominent actions, `Secondary` for less prominent elements, `Tertiary` for contrasting accents, `Error` for destructive actions, and `Surface` for backgrounds.",
+      "weight": 1.0,
+      "why": "Hardcoding hex colors breaks user-generated Dynamic Color (Material You) and makes dark mode implementation rigid and brittle.",
+      "check": "Are you defining a color by its hex code instead of its semantic M3 role?",
+      "bad": "`background-color: #6200EE`",
+      "good": "`background-color: colorPrimary` or `MaterialTheme.colorScheme.primary`"
+    },
+    {
+      "id": "android-platform-fluency-v1-r2",
+      "rule": "Every container color must be paired with its specific \"On\" color token for text and iconography (e.g., `Primary` container must use `On Primary` text; `Surface` must use `On Surface`).",
+      "weight": 0.98,
+      "why": "The \"On\" color tokens are mathematically calculated by the M3 palette generator to guarantee accessible contrast ratios against their parent containers in both light and dark modes.",
+      "check": "Is the text color inside a `Primary` button explicitly set to `On Primary`?",
+      "bad": "Setting the text color of a `Primary` button to `#FFFFFF` manually.",
+      "good": "Setting the text color of a `Primary` button to `MaterialTheme.colorScheme.onPrimary`."
+    },
+    {
+      "id": "android-platform-fluency-v1-r3",
+      "rule": "Use M3 Tonal Elevation (shifting the background color slightly lighter or darker) to differentiate overlapping surfaces, reserving heavy drop shadows exclusively for transient elements like Modals, FABs, and Dialogs.",
+      "weight": 0.96,
+      "why": "M3 modernizes the UI by flattening the visual hierarchy. Overusing drop shadows creates a cluttered, outdated \"Material Design 1\" look.",
+      "check": "Are you using a drop shadow to separate a permanent list item from its background?",
+      "bad": "Adding an 8dp drop shadow to every card in a scrolling feed.",
+      "good": "Applying Elevation Level 1 (a subtle tonal shift) to the cards, and keeping them shadowless until dragged."
+    },
+    {
+      "id": "android-platform-fluency-v1-r4",
+      "rule": "Strictly utilize the 5 standard M3 typography categories: `Display` (massive, short text), `Headline` (primary page titles), `Title` (medium emphasis, app bars), `Body` (long-form reading), and `Label` (buttons, tiny metadata).",
+      "weight": 0.94,
+      "why": "Deviating from the scale breaks typographic rhythm and accessibility scaling.",
+      "check": "Can every text element on the screen be mapped cleanly to one of the 5 M3 type roles?",
+      "bad": "Creating a custom \"Subtext_Mini_Bold\" style at 11sp.",
+      "good": "Using `Label Small` for the timestamp on a message."
+    },
+    {
+      "id": "android-platform-fluency-v1-r5",
+      "rule": "Every interactive element must have a minimum clickable area of 48x48dp, regardless of the visual size of the component itself.",
+      "weight": 0.92,
+      "why": "48dp translates to roughly 9mm, the minimum physical size required for a human finger to reliably tap without error.",
+      "check": "Is the bounding box of the click listener at least 48x48dp, even if the icon inside is only 24x24dp?",
+      "bad": "A 24x24dp close icon with exactly a 24x24dp touch target.",
+      "good": "A 24x24dp close icon with 12dp of invisible padding on all sides, resulting in a 48x48dp touch target."
+    },
+    {
+      "id": "android-platform-fluency-v1-r6",
+      "rule": "Use `Filled Buttons` for the single highest priority action on screen, `Tonal Buttons` for high-priority secondary actions, `Outlined Buttons` for medium priority, and `Text Buttons` for the lowest priority actions.",
+      "weight": 0.9,
+      "why": "Providing multiple `Filled Buttons` confuses the user about what the primary goal of the screen is.",
+      "check": "Is there more than one `Filled Button` visible in the immediate viewport?",
+      "bad": "A dialog with a Filled \"Cancel\" button and a Filled \"Submit\" button.",
+      "good": "A dialog with a Text \"Cancel\" button and a Filled \"Submit\" button."
+    },
+    {
+      "id": "android-platform-fluency-v1-r7",
+      "rule": "M3 Buttons must use fully rounded pill-shapes (Corner size: 100%) by default, contain label text using the `Label Large` type token, and optionally include an 18x18dp icon placed before the text.",
+      "weight": 0.88,
+      "why": "Standardizing button anatomy ensures users instantly recognize interactive elements across the OS.",
+      "check": "Are the buttons fully rounded, and is the text capitalized normally (M3) rather than ALL CAPS (M2)?",
+      "bad": "A rectangular button with ALL CAPS text.",
+      "good": "A pill-shaped button with Sentence case text."
+    },
+    {
+      "id": "android-platform-fluency-v1-r8",
+      "rule": "Use a FAB exclusively for the single most common, primary action in the current screen context. Place it in the bottom-right corner, 16dp from the edges.",
+      "weight": 0.86,
+      "why": "The FAB is the most visually prominent element on the screen. Using it for a secondary action wastes its visual weight.",
+      "check": "Does the action the FAB performs represent the main reason the user is on this screen?",
+      "bad": "Using a FAB to open the settings menu on a social feed.",
+      "good": "Using a FAB to \"Compose New Tweet\" on a social feed."
+    },
+    {
+      "id": "android-platform-fluency-v1-r9",
+      "rule": "Use `Filled TextFields` for forms with multiple inputs to establish a clear visual baseline, and use `Outlined TextFields` in isolated contexts or where a filled background conflicts with the surface.",
+      "weight": 0.84,
+      "why": "M3 explicitly defines these two styles to solve different spatial problems. Filled is for dense forms; Outlined is for focus.",
+      "check": "Are you mixing Filled and Outlined text fields in the same form?",
+      "bad": "A login form where \"Email\" is an Outlined field and \"Password\" is a Filled field.",
+      "good": "A login form where both fields are Filled, providing a consistent vertical rhythm."
+    },
+    {
+      "id": "android-platform-fluency-v1-r10",
+      "rule": "Differentiate cards by choosing one of the three M3 types: `Elevated Card` (uses a drop shadow, best for distinct items), `Filled Card` (uses a surface variant color, best for grouping), or `Outlined Card` (uses a border, best for subtle boundaries).",
+      "weight": 0.82,
+      "why": "Mixing card styles inappropriately creates visual chaos.",
+      "check": "Does the card style match its level of interactivity and importance?",
+      "bad": "Using an Outlined Card for a highly interactive, draggable item.",
+      "good": "Using an Elevated Card for a draggable item, and Filled Cards for static dashboard widgets."
+    },
+    {
+      "id": "android-platform-fluency-v1-r11",
+      "rule": "Use a Bottom Navigation Bar only for top-level destinations, containing exactly 3 to 5 items. Never use it for actions (like \"Compose\" or \"Search\").",
+      "weight": 0.8,
+      "why": "The Bottom Nav is for structural movement. Placing actions in the nav bar conflates navigation with execution.",
+      "check": "Does every icon in the Bottom Nav change the entire view of the application?",
+      "bad": "A Bottom Nav with \"Home\", \"Profile\", and a \"Create Post\" action.",
+      "good": "A Bottom Nav with \"Home\", \"Search\", \"Notifications\", and \"Profile\"."
+    },
+    {
+      "id": "android-platform-fluency-v1-r12",
+      "rule": "Automatically convert Bottom Navigation Bars into a vertical Navigation Rail on the left edge of the screen when the layout expands to Tablet/Foldable sizes (Compact to Medium/Expanded WindowSizeClass).",
+      "weight": 0.78,
+      "why": "Bottom Navigation stretches uncomfortably on wide screens and is ergonomically difficult to reach on tablets. The left rail maps perfectly to where the user's left thumb rests holding a tablet.",
+      "check": "If the screen width exceeds 600dp, does the navigation move to the left edge?",
+      "bad": "A 10-inch tablet layout where the Bottom Nav stretches across the entire bottom edge.",
+      "good": "A tablet layout utilizing a Navigation Rail on the left, leaving the bottom edge clean."
+    },
+    {
+      "id": "android-platform-fluency-v1-r13",
+      "rule": "Use a modal Navigation Drawer (hamburger menu) only when the app has more than 5 top-level destinations, or requires deep hierarchical navigation that cannot fit in a Bottom Nav.",
+      "weight": 0.77,
+      "why": "Items in a drawer are hidden (out of sight, out of mind). Hiding primary destinations reduces engagement.",
+      "check": "Could these destinations fit comfortably in a Bottom Nav or Rail?",
+      "bad": "Hiding the 3 main features of the app inside a hamburger menu to make the UI look \"clean\".",
+      "good": "Using a Bottom Nav for the 4 main features, and a Navigation Drawer for \"Settings, Help, About, and Account Management\"."
+    },
+    {
+      "id": "android-platform-fluency-v1-r14",
+      "rule": "The app's root layout must draw entirely under the transparent system status bar (top) and navigation bar (bottom). Use `WindowInsets` to apply internal padding so interactive content is not obscured.",
+      "weight": 0.75,
+      "why": "Modern Android requires edge-to-edge drawing to prevent ugly black bars at the top and bottom of the screen, providing an immersive experience.",
+      "check": "Are lists capable of scrolling *behind* the translucent bottom navigation handle?",
+      "bad": "Setting the system navigation bar to solid black.",
+      "good": "Drawing the UI behind a transparent navigation bar and applying `navigationBarsPadding()` to the bottom-most button."
+    },
+    {
+      "id": "android-platform-fluency-v1-r15",
+      "rule": "Never place interactive elements (like FABs or Bottom Navs) within the system gesture zones (bottom inset or side insets). Always add inset padding.",
+      "weight": 0.73,
+      "why": "Placing a button in the system navigation zone means the user will accidentally trigger the Android Home or Back gesture when trying to click the button.",
+      "check": "Is the FAB padded above the bottom WindowInset?",
+      "bad": "A FAB sitting flush against the very bottom pixels of the physical screen.",
+      "good": "A FAB sitting 16dp above the `systemGestureInsets.bottom`."
+    },
+    {
+      "id": "android-platform-fluency-v1-r16",
+      "rule": "Ensure custom views, dialogs, and navigation frameworks support the Android Predictive Back gesture, allowing the user to peek at the previous screen before committing to the back action.",
+      "weight": 0.71,
+      "why": "Android 14+ makes the back gesture predictive. Apps that manually intercept the back button without providing the predictive animation feel broken and trap the user.",
+      "check": "Does swiping from the left edge slowly reveal the previous screen or home screen?",
+      "bad": "Intercepting the hardware back button with `onBackPressed()` to show a custom modal without registering an `OnBackPresse",
+      "good": "Using the standard AndroidX Navigation component which handles predictive back animations automatically."
+    },
+    {
+      "id": "android-platform-fluency-v1-r17",
+      "rule": "Design layouts to react to three breakpoints: `Compact` (Phones, <600dp), `Medium` (Foldables/Small Tablets, 600-840dp), and `Expanded` (Large Tablets, >840dp).",
+      "weight": 0.69,
+      "why": "Hardcoding specific dp widths guarantees the UI will break on the diverse ecosystem of Android devices.",
+      "check": "Does the layout fundamentally restructure (not just stretch) when moved from Compact to Expanded?",
+      "bad": "A single column list that stretches to 1000dp wide on a tablet.",
+      "good": "A single column list on Compact that transforms into a two-pane List-Detail view on Expanded."
+    },
+    {
+      "id": "android-platform-fluency-v1-r18",
+      "rule": "When transitioning from Compact to Expanded width, convert deep list-to-detail navigation flows into a side-by-side Two-Pane layout (List on left, Detail on right).",
+      "weight": 0.67,
+      "why": "Forcing users to navigate back and forth on a large screen wastes space and requires excessive interaction cost.",
+      "check": "Does the app utilize the extra horizontal space to show hierarchy?",
+      "bad": "A tablet app where clicking an email opens a new full-screen window, requiring the user to hit \"Back\" to see the inbox a",
+      "good": "A tablet app where clicking an email in the left pane updates the reading pane on the right."
+    },
+    {
+      "id": "android-platform-fluency-v1-r19",
+      "rule": "Dialogs must never stretch to the edges of the screen. They must have a minimum margin of 24dp from the left and right edges, and a maximum width of 560dp.",
+      "weight": 0.65,
+      "why": "Full-width dialogs look like entirely new screens, confusing the user's mental model of the back stack.",
+      "check": "Is the dialog constrained to a readable maximum width on tablets?",
+      "bad": "A dialog that stretches to 1000dp wide on a tablet, making the text impossible to track.",
+      "good": "A dialog centered on the tablet screen capped at 560dp wide."
+    },
+    {
+      "id": "android-platform-fluency-v1-r20",
+      "rule": "Use Snackbars for brief, low-priority feedback about an operation. They must appear at the bottom of the screen, sit *above* bottom navigation bars, and disappear automatically (usually 4-10 seconds).",
+      "weight": 0.63,
+      "why": "Snackbars are transient and should not permanently obscure UI. Placing them under a FAB or Navigation Bar makes them illegible.",
+      "check": "If a Snackbar appears, does it push the FAB up or sit cleanly above the Bottom Nav?",
+      "bad": "A Snackbar that appears at the very bottom edge of the screen, underneath the Bottom Navigation bar.",
+      "good": "A Snackbar that appears immediately above the Bottom Navigation bar, temporarily shifting the FAB upward."
+    },
+    {
+      "id": "android-platform-fluency-v1-r21",
+      "rule": "Use the standard M3 shape scales: `None` (0dp), `Extra Small` (4dp), `Small` (8dp), `Medium` (12dp), `Large` (16dp), `Extra Large` (28dp), and `Full` (Pill). Do not use arbitrary radii like 7dp or 11dp.",
+      "weight": 0.61,
+      "why": "Consistent corner radii create a unified subconscious structural language across the app.",
+      "check": "Do the corner radii map to the official M3 shape scale?",
+      "bad": "A card with an arbitrary 13dp border radius.",
+      "good": "A card using the standard `Medium` (12dp) shape token."
+    },
+    {
+      "id": "android-platform-fluency-v1-r22",
+      "rule": "Use a `Switch` to instantly activate/deactivate a standalone setting. Use a `Checkbox` when selecting multiple options from a list or when the selection requires a \"Save\" button to take effect.",
+      "weight": 0.59,
+      "why": "A switch implies an immediate system state change (like a light switch). A checkbox implies batching data for future submission.",
+      "check": "If the user toggles this control, does the setting apply immediately without a save button?",
+      "bad": "Using checkboxes in a settings menu where toggling them immediately changes the app behavior.",
+      "good": "Using switches in the settings menu, and checkboxes in a multi-select deletion list."
+    },
+    {
+      "id": "android-platform-fluency-v1-r23",
+      "rule": "Dividers must be 1dp thick and use the `Outline Variant` token color to ensure they are subtle and do not command visual hierarchy.",
+      "weight": 0.57,
+      "why": "Heavy or highly contrasted dividers create visual noise and segment the screen too aggressively.",
+      "check": "Are dividers barely visible, providing just enough structure to separate content?",
+      "bad": "A 2dp thick, solid black divider between list items.",
+      "good": "A 1dp thick divider using `MaterialTheme.colorScheme.outlineVariant`."
+    },
+    {
+      "id": "android-platform-fluency-v1-r24",
+      "rule": "When a modal (Dialog, Bottom Sheet, or Navigation Drawer) is open, the background content must be obscured by a Scrim. The M3 standard scrim is the `Scrim` token color (usually pure black) set to 32% opacity.",
+      "weight": 0.55,
+      "why": "The scrim focuses the user's attention on the modal and disables interaction with the background surface.",
+      "check": "Does the background dim to exactly 32% opacity when the modal opens?",
+      "bad": "Opening a dialog over a fully bright background, making it hard to read.",
+      "good": "The background instantly dims using `colorScheme.scrim` at 32% alpha.  ## Anti-patterns  ### 1. The iOS Port Designing a"
+    }
+  ]
+}

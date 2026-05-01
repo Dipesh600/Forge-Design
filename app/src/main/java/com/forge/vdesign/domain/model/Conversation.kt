@@ -11,5 +11,9 @@ data class Conversation(
     val updatedAt: Long = System.currentTimeMillis(),
     val totalTokens: Int = 0,
     val messageCount: Int = 0,
-    val isStarred: Boolean = false
+    val isStarred: Boolean = false,
+    val designSystem: String = "",
+    val projectManifest: String = "{}",
+    val screenCount: Int = 0,
+    val thumbnailUrl: String? = null
 )

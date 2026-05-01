@@ -21,5 +21,9 @@ data class DesignBrief(
     val rawPrompt: String = "",             // original user message(s) preserved for context
     val projectName: String = "FORGE Project", // Stitch project name
     val plannedScreens: List<String> = emptyList(), // e.g. ["Login", "Dashboard", "Profile"]
-    val stitchProjectId: String? = null     // set after Stitch create_project
+    val stitchProjectId: String? = null,    // set after Stitch create_project
+    val primaryColorHex: String? = null,    // e.g. "#FF5722"
+    val fontFamily: String? = null,         // e.g. "Inter", "Roboto"
+    val isDarkMode: Boolean = false,        // dark or light mode
+    val designSystemAssetId: String? = null // set after apply_design_system
 ) : Parcelable

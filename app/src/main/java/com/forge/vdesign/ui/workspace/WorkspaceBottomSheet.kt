@@ -28,8 +28,12 @@ class WorkspaceBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var adapter: WorkspaceScreenAdapter
     
+    override fun getTheme(): Int = R.style.TransparentBottomSheetDialog
+
     var pendingScreens: List<ChatMessage>? = null
     var pendingProjectTitle: String? = null
+
+    var onEditScreenClicked: ((ChatMessage) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,10 +42,16 @@ class WorkspaceBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = WorkspaceScreenAdapter { screen ->
-            ScreenPreviewActivity.launchSimple(requireContext(), screen.content, screen.htmlUrl, screen.screenshotUrl)
-            dismiss()
-        }
+        adapter = WorkspaceScreenAdapter(
+            onPreviewClick = { screen ->
+                ScreenPreviewActivity.launchSimple(requireContext(), screen.content, screen.htmlUrl, screen.screenshotUrl)
+                dismiss()
+            },
+            onEditClick = { screen ->
+                onEditScreenClicked?.invoke(screen)
+                dismiss()
+            }
+        )
 
         view.findViewById<RecyclerView>(R.id.rvWorkspaceScreens).apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
@@ -64,7 +74,8 @@ class WorkspaceBottomSheet : BottomSheetDialogFragment() {
     }
 
     class WorkspaceScreenAdapter(
-        private val onClick: (ChatMessage) -> Unit
+        private val onPreviewClick: (ChatMessage) -> Unit,
+        private val onEditClick: (ChatMessage) -> Unit
     ) : ListAdapter<ChatMessage, WorkspaceScreenAdapter.VH>(DiffCB()) {
 
         inner class VH(view: View) : RecyclerView.ViewHolder(view) {
@@ -72,6 +83,7 @@ class WorkspaceBottomSheet : BottomSheetDialogFragment() {
             val name: TextView = view.findViewById(R.id.tvScreenName)
             val id: TextView = view.findViewById(R.id.tvScreenId)
             val time: TextView = view.findViewById(R.id.tvScreenTime)
+            val btnEdit: View = view.findViewById(R.id.btnEditScreen)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -87,7 +99,8 @@ class WorkspaceBottomSheet : BottomSheetDialogFragment() {
             } else {
                 holder.thumb.setImageResource(android.R.drawable.ic_menu_gallery)
             }
-            holder.itemView.setOnClickListener { onClick(msg) }
+            holder.thumb.setOnClickListener { onPreviewClick(msg) }
+            holder.btnEdit.setOnClickListener { onEditClick(msg) }
         }
 
         private fun formatRelativeTime(ts: Long): String {

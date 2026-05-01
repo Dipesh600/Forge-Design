@@ -16,6 +16,8 @@ import com.forge.vdesign.mcp.StitchScreenResult
 import com.forge.vdesign.skills.SkillRepository
 import com.forge.vdesign.skills.SkillRouter
 import com.forge.vdesign.skills.models.Skill
+import com.forge.vdesign.agents.AgentEvent
+import com.forge.vdesign.agents.WorkspaceContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
@@ -72,7 +74,30 @@ class BrainOrchestrator @Inject constructor(
 
         onLog(AgentLogEntry("Stitch MCP", "Project created: $projectId", LogStatus.DONE))
         
-        val briefWithProject = brief.copy(stitchProjectId = projectId)
+        var assetId: String? = null
+        if (brief.primaryColorHex != null || brief.fontFamily != null) {
+            onLog(AgentLogEntry("Stitch MCP", "Creating Design System...", LogStatus.RUNNING))
+            val dsMap = mutableMapOf<String, Any>()
+            val colors = mutableMapOf<String, Any>()
+            brief.primaryColorHex?.let { colors["primary"] = it }
+            if (colors.isNotEmpty()) dsMap["colors"] = colors
+            
+            val typography = mutableMapOf<String, Any>()
+            brief.fontFamily?.let { typography["fontFamily"] = it }
+            if (typography.isNotEmpty()) dsMap["typography"] = typography
+            
+            dsMap["appearance"] = mapOf("mode" to if (brief.isDarkMode) "DARK" else "LIGHT")
+            
+            val dsResult = mcpToolExecutor.createDesignSystem(projectId, dsMap)
+            if (dsResult is McpResult.Success && dsResult.data.assetId != null) {
+                assetId = dsResult.data.assetId
+                onLog(AgentLogEntry("Stitch MCP", "Design System created: $assetId", LogStatus.DONE))
+            } else {
+                onLog(AgentLogEntry("Stitch MCP", "Design System creation failed", LogStatus.FAILED))
+            }
+        }
+
+        val briefWithProject = brief.copy(stitchProjectId = projectId, designSystemAssetId = assetId)
         val screenName = brief.plannedScreens.firstOrNull() ?: "Home Screen"
 
         return generateSingleScreen(briefWithProject, screenName, onLog)
@@ -85,41 +110,136 @@ class BrainOrchestrator @Inject constructor(
         brief: DesignBrief,
         onLog: (AgentLogEntry) -> Unit = {}
     ): Flow<OrchestrationResult> = flow {
-        onLog(AgentLogEntry("Stitch MCP", "Creating project...", LogStatus.RUNNING))
+        // Kept for backward compatibility
+    }
 
-        val projectResult = try {
-            mcpToolExecutor.createProject(brief.projectName)
-        } catch (e: Exception) {
-            emit(OrchestrationResult.Failure("createProject error: ${e.message}"))
-            return@flow
-        }
+    /**
+     * The main deterministic generation pipeline for the Chat UI.
+     * Replaces the ReAct loop in ForgeAgent.
+     */
+    fun runPipeline(
+        brief: DesignBrief,
+        context: WorkspaceContext
+    ): Flow<AgentEvent> = flow {
+        emit(AgentEvent.Thinking("Structuring design requirements..."))
+        emit(AgentEvent.StatusLine("Setting up project: ${brief.projectName}"))
 
-        val projectId = when (projectResult) {
-            is McpResult.Success -> projectResult.data.projectId
-            is McpResult.Error  -> {
-                emit(OrchestrationResult.Failure("Stitch project creation failed: ${projectResult.message}"))
+        // 1. Create or use existing project
+        val projectId = if (context.projectId.isNotEmpty()) {
+            context.projectId
+        } else {
+            emit(AgentEvent.Thinking("Creating new Stitch project: ${brief.projectName}"))
+            val projectResult = try {
+                mcpToolExecutor.createProject(brief.projectName)
+            } catch (e: Exception) {
+                emit(AgentEvent.Speaks("Failed to create project: ${e.message}"))
                 return@flow
+            }
+            when (projectResult) {
+                is McpResult.Success -> projectResult.data.projectId
+                is McpResult.Error -> {
+                    emit(AgentEvent.Speaks("Stitch project creation failed: ${projectResult.message}"))
+                    return@flow
+                }
             }
         }
 
         if (projectId == null) {
-            emit(OrchestrationResult.Failure("Stitch returned no project ID — check server logs"))
+            emit(AgentEvent.Speaks("Could not get a valid Project ID from Stitch."))
             return@flow
         }
-
-        onLog(AgentLogEntry("Stitch MCP", "Project ready ✓ $projectId", LogStatus.DONE))
-        val briefWithProject = brief.copy(stitchProjectId = projectId)
-
-        for (screenName in brief.plannedScreens) {
-            onLog(AgentLogEntry("BrainOrchestrator", "Generating: $screenName", LogStatus.RUNNING, screenName))
-            val result = try {
-                generateSingleScreen(briefWithProject, screenName, onLog)
-            } catch (e: Exception) {
-                android.util.Log.e("BrainOrchestrator", "generateSingleScreen crash: ${e.message}", e)
-                OrchestrationResult.Failure("$screenName failed: ${e.message}")
+        
+        var assetId: String? = null
+        if (brief.primaryColorHex != null || brief.fontFamily != null) {
+            emit(AgentEvent.Thinking("Creating Design System..."))
+            val dsMap = mutableMapOf<String, Any>()
+            val colors = mutableMapOf<String, Any>()
+            brief.primaryColorHex?.let { colors["primary"] = it }
+            if (colors.isNotEmpty()) dsMap["colors"] = colors
+            
+            val typography = mutableMapOf<String, Any>()
+            brief.fontFamily?.let { typography["fontFamily"] = it }
+            if (typography.isNotEmpty()) dsMap["typography"] = typography
+            
+            dsMap["appearance"] = mapOf("mode" to if (brief.isDarkMode) "DARK" else "LIGHT")
+            
+            val dsResult = mcpToolExecutor.createDesignSystem(projectId, dsMap)
+            if (dsResult is McpResult.Success && dsResult.data.assetId != null) {
+                assetId = dsResult.data.assetId
+                emit(AgentEvent.StatusLine("Applied Design System"))
             }
-            emit(result)
         }
+
+        val briefWithProject = brief.copy(stitchProjectId = projectId, designSystemAssetId = assetId)
+
+        // 2. Generate each planned screen
+        for (screenName in brief.plannedScreens) {
+            emit(AgentEvent.Thinking("Designing $screenName..."))
+            emit(AgentEvent.StatusLine("Designing $screenName"))
+
+            // 2a. Skill Injection
+            emit(AgentEvent.Thinking("Retrieving design skills for $screenName..."))
+            val skills = try { skillRouter.routeSkills(briefWithProject, limit = 3) } catch (e: Exception) { emptyList() }
+            
+            // 2b. Synthesize Stitch Prompt
+            val stitchPrompt = synthesizeStitchPrompt(briefWithProject, screenName, skills)
+
+            // 2c. Generation
+            emit(AgentEvent.StatusLine("Rendering pixels in Stitch..."))
+            val mcpResult = mcpToolExecutor.generateScreen(projectId, stitchPrompt, "MOBILE")
+
+            when (mcpResult) {
+                is McpResult.Success -> {
+                    val screen = mcpResult.data
+                    if (screen.error != null) {
+                        emit(AgentEvent.Speaks("Failed to render $screenName: ${screen.error}"))
+                    } else if (screen.isSuccess) {
+                        // 2d. Critique (Phase 5 addition)
+                        emit(AgentEvent.Thinking("Analyzing design quality of $screenName..."))
+                        val critique = criticAgent.evaluate(StitchOutput(screen.description ?: "", screen.suggestions ?: emptyList(), screen.screenshotUrl), skills)
+                        
+                        var finalScreen = screen
+                        var finalCritique = critique
+
+                        // 2e. Auto-Revise if score is low
+                        if (critique.overallScore < 7.0 && critique.suggestedFixes.isNotEmpty() && screen.screenId != null) {
+                            emit(AgentEvent.StatusLine("Score too low (${critique.overallScore}/10). Auto-revising..."))
+                            val editInstruction = critique.suggestedFixes.joinToString("; ")
+                            val reviseResult = mcpToolExecutor.editScreens(projectId, listOf(screen.screenId), editInstruction)
+                            
+                            if (reviseResult is McpResult.Success && reviseResult.data.isSuccess) {
+                                finalScreen = reviseResult.data
+                                // Re-evaluate (optional, but good for reporting)
+                                finalCritique = criticAgent.evaluate(StitchOutput(finalScreen.description ?: "", finalScreen.suggestions ?: emptyList(), finalScreen.screenshotUrl), skills)
+                            }
+                        }
+
+                        // Apply the design system if available
+                        if (briefWithProject.designSystemAssetId != null && finalScreen.screenId != null) {
+                            emit(AgentEvent.StatusLine("Applying Design System..."))
+                            mcpToolExecutor.applyDesignSystem(projectId, listOf(finalScreen.screenId), briefWithProject.designSystemAssetId)
+                        }
+
+                        // Emit final result
+                        emit(AgentEvent.Speaks("I've finished designing the **$screenName**. (Quality Score: ${finalCritique.overallScore}/10)"))
+                        emit(AgentEvent.ScreenReady(
+                            screenName = screenName,
+                            screenshotUrl = finalScreen.screenshotUrl,
+                            htmlUrl = finalScreen.htmlUrl,
+                            projectId = projectId,
+                            designReasoning = mapOf("Critique" to (finalCritique.suggestedFixes.take(3).joinToString("; ").takeIf { it.isNotBlank() } ?: "Layout generated successfully."))
+                        ))
+                    } else {
+                         emit(AgentEvent.Speaks("Stitch generated $screenName, but returned no preview URL."))
+                    }
+                }
+                is McpResult.Error -> {
+                    emit(AgentEvent.Speaks("Failed to generate $screenName: ${mcpResult.message}"))
+                }
+            }
+        }
+        
+        emit(AgentEvent.StatusLine(null)) // clear status
     }
 
     /**
@@ -181,6 +301,13 @@ class BrainOrchestrator @Inject constructor(
                     OrchestrationResult.Failure(screen.error)
                 } else {
                     onLog(AgentLogEntry("Stitch MCP", "$screenName done ✓", LogStatus.DONE, screenName))
+                    
+                    if (brief.designSystemAssetId != null && screen.screenId != null) {
+                        onLog(AgentLogEntry("Stitch MCP", "Applying Design System...", LogStatus.RUNNING, screenName))
+                        mcpToolExecutor.applyDesignSystem(projectId, listOf(screen.screenId), brief.designSystemAssetId)
+                        onLog(AgentLogEntry("Stitch MCP", "Design System applied.", LogStatus.DONE, screenName))
+                    }
+                    
                     buildOrchestrationResult(screen, screenName, brief, skills)
                 }
             }
@@ -196,8 +323,31 @@ class BrainOrchestrator @Inject constructor(
         screenName: String,
         skills: List<Skill>
     ): String {
-        val systemPrompt = "You are a professional Stitch prompt engineer. Convert the user's design goal and these skills into a detailed UI description for the Stitch rendering engine. Output ONLY the description."
-        val userPrompt = "App: ${brief.projectName}\nScreen: $screenName\nGoal: ${brief.userGoal}\nSkills: ${skills.joinToString { it.name }}"
+        // Format skill rules into the three-tier block — same format as ForgeAgent's injection.
+        // The LLM synthesizing the Stitch prompt now has the actual design rules in context,
+        // not just skill names. It reasons with them the same way Antigravity does.
+        val skillBlock = skillRouter.formatSkillsForSystemPrompt(skills)
+
+        val systemPrompt = buildString {
+            append("You are a Stitch prompt engineer for FORGE AI Design Studio. ")
+            append("Convert the design brief below into a detailed, pixel-precise mobile UI description ")
+            append("for the Stitch rendering engine. Output ONLY the Stitch description — no explanations.\n\n")
+            if (skillBlock.isNotBlank()) {
+                append("The following design rules are your expertise. Apply every applicable rule ")
+                append("when writing the Stitch description:\n")
+                append(skillBlock)
+            }
+        }
+
+        val userPrompt = buildString {
+            appendLine("App: ${brief.projectName}")
+            appendLine("Screen: $screenName")
+            appendLine("Platform: Android Mobile, ${if (brief.isDarkMode) "Dark Mode" else "Light Mode"}")
+            appendLine("Goal: ${brief.userGoal}")
+            if (brief.mood.isNotBlank()) appendLine("Mood: ${brief.mood}")
+            if (brief.primaryColorHex != null) appendLine("Primary Color: ${brief.primaryColorHex}")
+            if (brief.fontFamily != null) appendLine("Font: ${brief.fontFamily}")
+        }
 
         return try {
             val response = miniMaxClient.chatCompletion(
@@ -206,11 +356,14 @@ class BrainOrchestrator @Inject constructor(
                     MiniMaxMessage("user", userPrompt)
                 ))
             )
-            response.choices?.firstOrNull()?.message?.content ?: brief.userGoal
+            response.choices?.firstOrNull()?.message?.content?.takeIf { it.isNotBlank() }
+                ?: brief.userGoal
         } catch (e: Exception) {
+            android.util.Log.w("BrainOrchestrator", "Prompt synthesis failed, using raw goal: ${e.message}")
             brief.userGoal
         }
     }
+
 
     private fun buildOrchestrationResult(
         screen: StitchScreenResult,

@@ -38,7 +38,7 @@ class ConversationListViewModel @Inject constructor(
             _state.value = _state.value.copy(isSignedOut = true)
         } else {
             _state.value = _state.value.copy(
-                userDisplayName = user.displayName ?: user.email ?: "Designer"
+                userDisplayName = (user.displayName ?: user.email ?: "").ifBlank { "Designer" }
             )
             observeConversations()
         }
@@ -50,7 +50,22 @@ class ConversationListViewModel @Inject constructor(
                 .catch { e -> _state.value = _state.value.copy(error = e.message) }
                 .collect { list ->
                     _state.value = _state.value.copy(conversations = list, isLoading = false)
+                    // Trigger one-time sync for any projects with 0 screens that might have history
+                    syncAllMetadata(list)
                 }
+        }
+    }
+
+    private var hasSyncedOnce = false
+    private fun syncAllMetadata(list: List<Conversation>) {
+        if (hasSyncedOnce || list.isEmpty()) return
+        hasSyncedOnce = true
+        viewModelScope.launch {
+            list.forEach { convo ->
+                if (convo.screenCount == 0) {
+                    chatRepository.syncProjectMetadata(convo.id)
+                }
+            }
         }
     }
 

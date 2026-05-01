@@ -12,6 +12,8 @@ data class Skill(
     val name: String = "",
     val version: String = "1.0",
     val category: String = "",
+    /** Keywords from SKILL.md metadata — used by SkillRouter for text-based routing */
+    val keywords: List<String> = emptyList(),
     val sourceBooks: List<String> = emptyList(),
     val rules: List<SkillRule> = emptyList(),
     /**
@@ -23,16 +25,26 @@ data class Skill(
 ) : Parcelable
 
 /**
- * A concrete, machine-checkable design rule.
+ * A concrete, machine-checkable design rule with full anatomy.
+ * The bad/good examples are what make an LLM apply the rule correctly
+ * rather than just "knowing" it abstractly.
  */
 @Parcelize
 data class SkillRule(
     val id: String = "",
     val rule: String = "",
-    /** Relevance weight 0.0-1.0 — higher = more important rule (used for prompt injection priority) */
+    /** Relevance weight 0.0-1.0 — higher = more important rule */
     val weight: Float = 1.0f,
     val severity: SkillSeverity = SkillSeverity.WARNING,
-    val checkType: SkillCheckType = SkillCheckType.STRUCTURAL
+    val checkType: SkillCheckType = SkillCheckType.STRUCTURAL,
+    /** Why this rule matters — the reasoning behind it */
+    val why: String = "",
+    /** Self-check question the LLM should ask before generating */
+    val check: String = "",
+    /** Concrete bad example — what NOT to do */
+    val bad: String = "",
+    /** Concrete good example — what TO do (the target) */
+    val good: String = ""
 ) : Parcelable
 
 enum class SkillSeverity {

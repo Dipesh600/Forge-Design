@@ -279,7 +279,8 @@ class ChatRepositoryImpl @Inject constructor(
         screenName: String,
         screenshotUrl: String?,
         htmlUrl: String?,
-        projectId: String?
+        projectId: String?,
+        designReasoning: Map<String, String>?
     ): ForgeResult<ChatMessage> {
         return try {
             val metadata = JSONObject().apply {
@@ -288,6 +289,7 @@ class ChatRepositoryImpl @Inject constructor(
                 screenshotUrl?.let { put("screenshotUrl", it) }
                 htmlUrl?.let { put("htmlUrl", it) }
                 projectId?.let { put("projectId", it) }
+                designReasoning?.let { put("designReasoning", JSONObject(it)) }
             }.toString()
 
             val entity = MessageEntity(
@@ -311,7 +313,9 @@ class ChatRepositoryImpl @Inject constructor(
 
                 conversationDao.update(it.copy(
                     updatedAt = System.currentTimeMillis(),
-                    projectManifest = currentManifest.toString()
+                    projectManifest = currentManifest.toString(),
+                    screenCount = it.screenCount + 1,
+                    thumbnailUrl = it.thumbnailUrl ?: screenshotUrl
                 ))
             }
             ForgeResult.Success(entity.toDomainModel())
@@ -358,8 +362,12 @@ class ChatRepositoryImpl @Inject constructor(
         var screenshotUrl: String? = null
         var htmlUrl: String? = null
         var screenCardProjectId: String? = null
+        var isRejected = false
+        val designDecisions = mutableListOf<com.forge.vdesign.domain.model.DesignDecision>()
 
         var thinkingContent: String? = null
+        var isAgentLog = false
+        var agentLogTitle = ""
 
         if (metadata.isNotBlank()) {
             runCatching {
@@ -383,10 +391,42 @@ class ChatRepositoryImpl @Inject constructor(
                         screenshotUrl = json.optString("screenshotUrl").takeIf { it.isNotBlank() }
                         htmlUrl = json.optString("htmlUrl").takeIf { it.isNotBlank() }
                         screenCardProjectId = json.optString("projectId").takeIf { it.isNotBlank() }
+                        isRejected = json.optBoolean("isRejected", false)
+                        
+                        val reasoningObj = json.optJSONObject("designReasoning")
+                        reasoningObj?.keys()?.forEach { key ->
+                            designDecisions.add(
+                                com.forge.vdesign.domain.model.DesignDecision(
+                                    decision = key,
+                                    principle = reasoningObj.getString(key),
+                                    sourceBook = "Forge Agent",
+                                    skillId = "agent"
+                                )
+                            )
+                        }
+                    }
+                    "agent_log" -> {
+                        isAgentLog = true
+                        agentLogTitle = json.optString("title", "Agent Activity")
                     }
                 }
             }.onFailure {
                 android.util.Log.w("FORGE_CHAT", "Failed to parse message metadata: ${it.message}")
+            }
+        }
+
+        // --- Retroactive Mapping for Legacy Messages ---
+        var finalIsAgentLog = isAgentLog
+        var finalAgentLogTitle = agentLogTitle
+        
+        if (!finalIsAgentLog && role == MessageRole.ASSISTANT.apiValue) {
+            if (content.startsWith("Called: ") || content.startsWith("tool_call:") || (content.startsWith("{") && content.contains("tool_call"))) {
+                finalIsAgentLog = true
+                finalAgentLogTitle = if (content.contains("Called: ")) {
+                    content.substringBefore("(").replace("Called: ", "Tool Execute")
+                } else {
+                    "Agent Action"
+                }
             }
         }
 
@@ -398,13 +438,18 @@ class ChatRepositoryImpl @Inject constructor(
             thinkingContent     = thinkingContent,
             timestamp           = timestamp,
             tokenCount          = tokenCount,
+            designReasoning     = designDecisions,
             isCanvasCard        = isCanvasCard,
             canvasPrompt        = canvasPrompt,
             embeddedBrief       = embeddedBrief,
             isScreenCard        = isScreenCard,
             screenshotUrl       = screenshotUrl,
             htmlUrl             = htmlUrl,
-            screenCardProjectId = screenCardProjectId
+            screenCardProjectId = screenCardProjectId,
+            isAgentLog          = finalIsAgentLog,
+            agentLogTitle       = finalAgentLogTitle,
+            agentLogContent     = content,
+            isRejected          = isRejected
         )
     }
 
@@ -414,8 +459,57 @@ class ChatRepositoryImpl @Inject constructor(
         createdAt   = createdAt,
         updatedAt   = updatedAt,
         totalTokens = totalTokens,
-        isStarred   = isStarred
+        messageCount = 0,
+        isStarred   = isStarred,
+        designSystem = designSystem,
+        projectManifest = projectManifest,
+        screenCount = screenCount,
+        thumbnailUrl = thumbnailUrl
     )
+
+    override suspend fun insertAgentLog(
+        conversationId: String,
+        title: String,
+        content: String
+    ): ForgeResult<ChatMessage> {
+        val metaJson = JSONObject().apply {
+            put("type", "agent_log")
+            put("title", title)
+        }
+        val msg = MessageEntity(
+            conversationId = conversationId,
+            role = "assistant",
+            content = content,
+            metadata = metaJson.toString()
+        )
+        return try {
+            messageDao.insert(msg)
+            ForgeResult.Success(msg.toDomainModel())
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException("Failed to insert log", e))
+        }
+    }
+
+    override suspend fun updateDesignSystem(conversationId: String, designSystem: String): ForgeResult<Unit> {
+        return try {
+            conversationDao.updateDesignSystem(conversationId, designSystem, System.currentTimeMillis())
+            ForgeResult.Success(Unit)
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException("Failed to update design system", e))
+        }
+    }
+
+    override suspend fun rejectScreenCard(messageId: String): ForgeResult<Unit> {
+        return try {
+            val entity = messageDao.getById(messageId) ?: throw Exception("Message not found")
+            val json = JSONObject(entity.metadata)
+            json.put("isRejected", true)
+            messageDao.insert(entity.copy(metadata = json.toString()))
+            ForgeResult.Success(Unit)
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException("Failed to reject screen card", e))
+        }
+    }
 
     override suspend fun renameConversation(conversationId: String, newTitle: String): ForgeResult<Unit> {
         return try {
@@ -431,7 +525,26 @@ class ChatRepositoryImpl @Inject constructor(
             conversationDao.updateStarred(conversationId, starred)
             ForgeResult.Success(Unit)
         } catch (e: Exception) {
-            ForgeResult.Error(ForgeException.UnknownException(e.message ?: "Error", e))
+            ForgeResult.Error(ForgeException.UnknownException("Failed to star", e))
+        }
+    }
+
+    override suspend fun syncProjectMetadata(conversationId: String): ForgeResult<Unit> {
+        return try {
+            val messages = getMessagesOnce(conversationId)
+            val screenCards = messages.filter { it.isScreenCard && !it.isRejected }
+            val count = screenCards.size
+            val thumb = screenCards.firstOrNull { !it.screenshotUrl.isNullOrBlank() }?.screenshotUrl
+
+            conversationDao.loadById(conversationId)?.let { convo ->
+                conversationDao.update(convo.copy(
+                    screenCount = count,
+                    thumbnailUrl = convo.thumbnailUrl ?: thumb
+                ))
+            }
+            ForgeResult.Success(Unit)
+        } catch (e: Exception) {
+            ForgeResult.Error(ForgeException.UnknownException("Sync failed", e))
         }
     }
 }

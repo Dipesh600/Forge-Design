@@ -11,6 +11,9 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(message: MessageEntity)
 
+    @Query("SELECT * FROM messages WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): MessageEntity?
+
     /** Observe all messages for a conversation in chronological order — primary UI source */
     @Query("SELECT * FROM messages WHERE conversationId = :conversationId ORDER BY timestamp ASC")
     fun loadByConversation(conversationId: String): Flow<List<MessageEntity>>

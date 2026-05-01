@@ -1,0 +1,159 @@
+{
+  "id": "color-systems-v1",
+  "name": "Color Systems",
+  "version": "3.0",
+  "category": "color",
+  "description": "Governs all decisions regarding UI color palettes, dark mode implementations, semantic colors (error/success), interactive states (hover/active), elevation, and contrast. Use this skill whenever the user asks about color choices, brand palettes, dark mode, component states, shadows, or when evaluating an interface that feels visually overwhelming, muddy, or inaccessible due to color.",
+  "keywords": [
+    "color",
+    "palette",
+    "dark",
+    "light",
+    "contrast",
+    "brand",
+    "theme"
+  ],
+  "sourceBooks": [
+    "Interaction of Color (Albers)",
+    "Material Design 3",
+    "Apple HIG"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "color-systems-v1-r1",
+      "rule": "Distribute UI colors according to the 60-30-10 ratio: 60% dominant background color, 30% secondary surface color (cards, sidebars), and 10% accent color (primary actions, highlights).",
+      "weight": 1.0,
+      "why": "Equal distribution of colors creates visual chaos. A strict ratio ensures the interface feels unified while allowing the 10% accent color to clearly draw the eye to primary actions.",
+      "check": "Is the accent color restricted exclusively to the most important interactive elements?",
+      "bad": "A screen where the background, the cards, and the buttons all use the primary brand blue in roughly equal proportions.",
+      "good": "A screen with a 60% off-white background, 30% light gray cards, and 10% vivid blue primary buttons."
+    },
+    {
+      "id": "color-systems-v1-r2",
+      "rule": "Strictly reserve Red for destructive actions/errors, Green for success/completion, and Yellow/Orange for warnings.",
+      "weight": 0.97,
+      "why": "These are deeply ingrained psychological associations. Using them for non-semantic branding causes severe cognitive dissonance.",
+      "check": "Are there any red, green, or yellow elements on the screen that do NOT communicate error, success, or warning?",
+      "bad": "Using a bright red button for \"Save Draft\" simply because red is the company's brand color.",
+      "good": "Using the brand's primary blue for \"Save Draft\" and reserving red exclusively for \"Delete Account.\""
+    },
+    {
+      "id": "color-systems-v1-r3",
+      "rule": "Never place highly saturated, complementary colors directly adjacent to one another (e.g., pure red on pure blue, or bright green on magenta).",
+      "weight": 0.94,
+      "why": "The human eye cannot focus on opposite wavelengths simultaneously. When highly saturated complements touch, the edge between them appears to vibrate or blur, causing immediate eye strain.",
+      "check": "Do the adjacent colors hurt your eyes to look at closely?",
+      "bad": "Bright cyan text on a pure red button.",
+      "good": "White text on a pure red button, or navy blue text on a pale cyan button."
+    },
+    {
+      "id": "color-systems-v1-r4",
+      "rule": "Light mode brand colors must be desaturated (lowered chroma) and often lightened before being used in dark mode. Never use fully saturated light-mode colors against dark backgrounds.",
+      "weight": 0.9,
+      "why": "Fully saturated colors on a black background create visual vibration and bleed, reducing legibility and causing eye fatigue. Desaturated \"pastel\" versions maintain readability without losing the hue.",
+      "check": "If you switch from light to dark mode, does the accent color become less saturated?",
+      "bad": "Using the exact same neon blue (`#0000FF`) for both light mode and dark mode buttons.",
+      "good": "Using `#0000FF` in light mode, but softening it to `#6666FF` in dark mode."
+    },
+    {
+      "id": "color-systems-v1-r5",
+      "rule": "In dark mode, convey depth (elevation) by making the surface color progressively lighter, not by adding drop shadows.",
+      "weight": 0.87,
+      "why": "Drop shadows rely on darkness to create the illusion of depth. On a dark background, shadows are invisible. Lighter surface colors simulate an object moving closer to a light source.",
+      "check": "Do elevated cards in dark mode have a lighter background color than the canvas beneath them?",
+      "bad": "A dark gray card on a black background with a heavy black drop shadow.",
+      "good": "A black background (`#121212`) with an elevated card using a slightly lighter gray (`#1E1E1E`)."
+    },
+    {
+      "id": "color-systems-v1-r6",
+      "rule": "Generate hover and active component states by systematically adjusting the Lightness (L in HSL) or Opacity of the base color, rather than arbitrarily picking new hex codes.",
+      "weight": 0.84,
+      "why": "Mathematical adjustments (e.g., darken by 10% for hover, 20% for active) create a predictable, cohesive design system that scales across all colors.",
+      "check": "Is the hover state a direct mathematical derivative of the default state?",
+      "bad": "A primary blue button (`#007BFF`) that turns a completely different hue of teal (`#20B2AA`) on hover.",
+      "good": "A primary blue button (`hsl(211, 100%, 50%)`) that darkens to `hsl(211, 100%, 40%)` on hover."
+    },
+    {
+      "id": "color-systems-v1-r7",
+      "rule": "Use off-blacks (e.g., `#1A1A1A`) for dark text/backgrounds and off-whites (e.g., `#FAFAFA`) for light backgrounds, rather than absolute `#000000` or `#FFFFFF`.",
+      "weight": 0.81,
+      "why": "Absolute contrast (pure black on pure white) can cause astigmatic halation (blurring) and eye strain on modern, high-brightness OLED screens.",
+      "check": "Is the primary background color `#FFFFFF` or `#000000`?",
+      "bad": "Body text set to `#000000` on a `#FFFFFF` background.",
+      "good": "Body text set to `#1C1C1C` on a `#F9F9F9` background."
+    },
+    {
+      "id": "color-systems-v1-r8",
+      "rule": "Establish visual hierarchy using only shades of gray before applying any color.",
+      "weight": 0.78,
+      "why": "Color is deceptive. If a layout relies entirely on color to establish hierarchy, that hierarchy will fail for color-blind users or in poor lighting. If it works in grayscale, color will only enhance i",
+      "check": "If you convert the screen to grayscale, can you still instantly identify the primary action and the visual hierarchy?",
+      "bad": "A dashboard where the only difference between \"Status: Online\" and \"Status: Offline\" is the color of the text.",
+      "good": "A dashboard where \"Status: Online\" is bold and accompanied by an icon, establishing hierarchy regardless of color."
+    },
+    {
+      "id": "color-systems-v1-r9",
+      "rule": "Restrict the UI to one primary accent color and, if absolutely necessary, one secondary accent color.",
+      "weight": 0.74,
+      "why": "Every additional color introduced into a UI dilutes the impact of the primary accent. The more colors you use, the harder it is to direct the user's attention.",
+      "check": "Are there more than two distinct accent colors competing for attention on the screen?",
+      "bad": "A settings page where every category icon uses a completely different, highly saturated brand color.",
+      "good": "A settings page where all icons are neutral gray, and only the \"Save Changes\" button uses the primary blue accent."
+    },
+    {
+      "id": "color-systems-v1-r10",
+      "rule": "Always evaluate text or icon color against the specific background it will sit on, never against a neutral canvas in a vacuum.",
+      "weight": 0.71,
+      "why": "A color's perceived lightness and hue shift drastically depending on its neighbor. A gray that looks perfectly legible on white may become invisible when placed on a blue background.",
+      "check": "Has this specific text color been tested for WCAG contrast compliance against this specific background?",
+      "bad": "Designing a gray icon on a white canvas, then placing it on a dark blue header where it disappears.",
+      "good": "Adjusting the icon to pure white specifically for the dark blue header to maintain contrast."
+    },
+    {
+      "id": "color-systems-v1-r11",
+      "rule": "Instead of using mathematically pure grays (which can look dead or dirty), tint your neutral grays slightly with the primary brand hue.",
+      "weight": 0.68,
+      "why": "Tinted neutrals create subtle, subconscious harmony across the entire interface, making the UI feel warmer and more cohesive.",
+      "check": "Do the gray backgrounds or text colors share a hint of the dominant brand hue?",
+      "bad": "A brand using vibrant purple, but setting all backgrounds to a sterile, pure gray (`#EEEEEE`).",
+      "good": "A brand using vibrant purple, setting its backgrounds to a cool, slightly purple-tinted gray (`#EBEAF0`)."
+    },
+    {
+      "id": "color-systems-v1-r12",
+      "rule": "Text placed on colored accent buttons must meet a minimum contrast ratio of 4.5:1 (AA standard).",
+      "weight": 0.65,
+      "why": "Buttons are the most critical interaction points. If the text is unreadable due to low contrast with the button color, the user cannot confidently take action.",
+      "check": "If you squint at the button, can you still read the label?",
+      "bad": "White text on a bright yellow button (Ratio: 1.1:1).",
+      "good": "Dark charcoal text on a bright yellow button (Ratio: 12.4:1)."
+    },
+    {
+      "id": "color-systems-v1-r13",
+      "rule": "Whenever color is used to indicate state or meaning, it must be accompanied by a secondary indicator (text, shape, icon, or pattern).",
+      "weight": 0.61,
+      "why": "To ensure accessibility for visually impaired and color-blind users who cannot perceive the color shift.",
+      "check": "If the screen were printed in black and white, would the user still understand the system state?",
+      "bad": "An input field outline turning red to indicate a validation error, with no error text.",
+      "good": "An input field outline turning red, accompanied by a warning icon and the text \"This field is required.\""
+    },
+    {
+      "id": "color-systems-v1-r14",
+      "rule": "The boundaries of interactive components (like input fields or buttons) must have a contrast ratio of at least 3:1 against the background canvas.",
+      "weight": 0.58,
+      "why": "Users need to know where interactive hit areas begin and end. If a text input blends into the background, the user won't know where to click.",
+      "check": "Is the edge of the input field clearly visible against the page background?",
+      "bad": "A white input field placed on an off-white `#F9F9F9` background with no border.",
+      "good": "A white input field placed on an off-white `#F9F9F9` background with a `#CCCCCC` border."
+    },
+    {
+      "id": "color-systems-v1-r15",
+      "rule": "Once a color is assigned a specific functional meaning (e.g., Blue = Clickable Link), it must not be used for non-functional decoration elsewhere in the app.",
+      "weight": 0.55,
+      "why": "Users build a mental model of your app's interaction language within seconds. Breaking that model causes frustration and mis-clicks.",
+      "check": "Is the primary link color being used anywhere just to \"look nice\"?",
+      "bad": "Using blue for text links, but also using the exact same blue for static, unclickable section headings.",
+      "good": "Using blue exclusively for interactive elements, and using dark gray or black for all static headings.  ## Anti-patterns"
+    }
+  ]
+}

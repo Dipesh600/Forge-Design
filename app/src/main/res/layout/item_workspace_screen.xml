@@ -67,6 +67,17 @@
                     android:textSize="10sp"
                     android:text="2m ago"/>
             </LinearLayout>
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditScreen"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:text="Edit"
+                android:textSize="10sp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                style="?attr/materialButtonOutlinedStyle"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

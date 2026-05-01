@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
     android:paddingTop="8dp"
@@ -11,7 +12,7 @@
     <!-- Thinking Header Button -->
     <LinearLayout
         android:id="@+id/llThinkingHeader"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -21,13 +22,23 @@
         android:clickable="true"
         android:focusable="true">
 
+        <View
+            android:id="@+id/viewThinkingOrb"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_thinking_orb" />
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="💭 Agent Thinking..."
+            android:text="Agent Thinking..."
             android:textColor="#A0A0B0"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:fontFamily="sans-serif-medium"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05" />
 
         <ImageView
             android:id="@+id/ivThinkingChevron"

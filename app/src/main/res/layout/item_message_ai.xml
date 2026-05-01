@@ -15,9 +15,11 @@
         android:layout_height="wrap_content"
         android:text="✦ FORGE"
         android:textSize="10sp"
-        android:textColor="#6B6B8A"
-        android:layout_marginBottom="4dp"
-        android:letterSpacing="0.08" />
+        android:textColor="@color/forge_primary"
+        android:fontFamily="sans-serif-black"
+        android:layout_marginBottom="6dp"
+        android:letterSpacing="0.1"
+        android:textAllCaps="true" />
 
     <!-- Message bubble with streaming cursor -->
     <LinearLayout
@@ -26,18 +28,19 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@drawable/bg_ai_bubble"
-        android:maxWidth="280dp">
+        android:maxWidth="300dp">
 
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:paddingEnd="4dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
             android:text="AI message"
             android:textColor="#E8E8F0"
             android:textSize="15sp"
-            android:lineSpacingExtra="2dp" />
+            android:fontFamily="sans-serif-medium"
+            android:lineSpacingExtra="3dp" />
 
         <!-- Blinking cursor ▌ — visible only while streaming -->
         <TextView
@@ -47,7 +50,7 @@
             android:text="▌"
             android:textColor="#7C6AF7"
             android:textSize="15sp"
-            android:paddingEnd="8dp"
+            android:paddingEnd="12dp"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -57,30 +60,64 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="4dp"
         android:visibility="gone">
 
-        <ImageButton
+        <LinearLayout
             android:id="@+id/btnCopy"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_copy"
-            app:tint="#6B6B8A"
-            android:padding="6dp"
-            android:contentDescription="Copy response" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:background="@drawable/bg_glass_card"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_copy"
+                app:tint="#A0A0B0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COPY"
+                android:textColor="#A0A0B0"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="6dp"
+                android:letterSpacing="0.08" />
+        </LinearLayout>
 
-        <ImageButton
+        <LinearLayout
             android:id="@+id/btnRetry"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_refresh"
-            app:tint="#6B6B8A"
-            android:padding="6dp"
-            android:layout_marginStart="8dp"
-            android:contentDescription="Retry prompt" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:background="@drawable/bg_glass_card"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_refresh"
+                app:tint="#A0A0B0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RETRY"
+                android:textColor="#A0A0B0"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="6dp"
+                android:letterSpacing="0.08" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

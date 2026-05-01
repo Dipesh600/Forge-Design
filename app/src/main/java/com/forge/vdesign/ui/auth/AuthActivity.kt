@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -28,16 +29,18 @@ class AuthActivity : AppCompatActivity() {
     private var isSignInMode = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
+        binding = ActivityAuthBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         // If already signed in, skip directly to chat
+        // We do this AFTER setContentView to ensure the window is initialized
         if (viewModel.isAlreadySignedIn) {
             goToMain()
             return
         }
-
-        binding = ActivityAuthBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         setupUi()
         observeState()

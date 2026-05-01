@@ -1,6 +1,7 @@
 package com.forge.vdesign.ui.chat
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.text.Spannable
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -41,9 +43,10 @@ import io.noties.markwon.image.glide.GlideImagesPlugin
  * raw syntax like "**bold**" or "### heading".
  */
 class ChatAdapter(
-    private val onOpenCanvas: (brief: DesignBrief, prompt: String) -> Unit = { _, _ -> },
+    private val onOpenCanvas: (view: View, brief: DesignBrief, prompt: String) -> Unit = { _, _, _ -> },
     private val onCopyMessage: (String) -> Unit = {},
-    private val onRetryMessage: (ChatMessage) -> Unit = {}
+    private val onRetryMessage: (ChatMessage) -> Unit = {},
+    private val onRejectScreen: (String) -> Unit = {}
 ) : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 
     // Built once per adapter instance — Markwon is thread-safe for reads.
@@ -54,6 +57,16 @@ class ChatAdapter(
             .usePlugin(GlideImagesPlugin.create(context))
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
+            .usePlugin(object : io.noties.markwon.AbstractMarkwonPlugin() {
+                override fun configureTheme(builder: io.noties.markwon.core.MarkwonTheme.Builder) {
+                    val codeBgColor = android.graphics.Color.parseColor("#1AFFFFFF")
+                    val codeTextColor = android.graphics.Color.parseColor("#E8E8F0")
+                    builder.codeBackgroundColor(codeBgColor)
+                        .codeTextColor(codeTextColor)
+                        .codeBlockBackgroundColor(codeBgColor)
+                        .codeBlockTextColor(codeTextColor)
+                }
+            })
             .build()
             .also { markwon = it }
     }
@@ -65,6 +78,8 @@ class ChatAdapter(
         const val VIEW_TYPE_AGENT_ACTIVITY = 4
         const val VIEW_TYPE_SCREEN_CARD    = 5
         const val VIEW_TYPE_THINKING       = 6
+        const val VIEW_TYPE_ACTIVITY_TIMELINE = 7
+        const val VIEW_TYPE_STATUS         = 8
     }
     
     // Track expanded thinking message IDs locally in the adapter
@@ -72,19 +87,23 @@ class ChatAdapter(
 
     /** ID of the message currently being streamed — shows blinking cursor */
     private var streamingMessageId: String? = null
+    private var isBusy: Boolean = false
 
     /** Update the list AND which message is actively streaming */
-    fun submitList(messages: List<ChatMessage>, streamingId: String?) {
-        streamingMessageId = streamingId
+    fun submitList(messages: List<ChatMessage>, streamingId: String?, isBusy: Boolean) {
+        this.streamingMessageId = streamingId
+        this.isBusy = isBusy
         submitList(messages)
     }
 
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
         return when {
+            message.id.startsWith("timeline_") -> VIEW_TYPE_ACTIVITY_TIMELINE
             message.id == "forge_thinking"    -> VIEW_TYPE_THINKING
+            message.id == "forge_status"      -> VIEW_TYPE_STATUS
             message.isScreenCard              -> VIEW_TYPE_SCREEN_CARD
-            message.isAgentActivity           -> VIEW_TYPE_AGENT_ACTIVITY
+            message.isAgentLog                -> VIEW_TYPE_AGENT_ACTIVITY
             message.isCanvasCard              -> VIEW_TYPE_CANVAS_CARD
             message.role == MessageRole.USER  -> VIEW_TYPE_USER
             else                              -> VIEW_TYPE_AI
@@ -95,10 +114,12 @@ class ChatAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_USER           -> TextViewHolder(inflater.inflate(R.layout.item_message_user, parent, false))
-            VIEW_TYPE_CANVAS_CARD   -> CanvasCardViewHolder(inflater.inflate(R.layout.item_message_canvas_card, parent, false), onOpenCanvas)
-            VIEW_TYPE_AGENT_ACTIVITY -> AgentActivityViewHolder(inflater.inflate(R.layout.item_agent_activity, parent, false))
-            VIEW_TYPE_SCREEN_CARD   -> ScreenCardViewHolder(inflater.inflate(R.layout.item_screen_result_card, parent, false))
+            VIEW_TYPE_CANVAS_CARD    -> CanvasCardViewHolder(inflater.inflate(R.layout.item_message_canvas_card, parent, false), onOpenCanvas)
+            VIEW_TYPE_AGENT_ACTIVITY -> AgentActivityViewHolder(inflater.inflate(R.layout.item_message_agent_activity, parent, false))
+            VIEW_TYPE_SCREEN_CARD    -> ScreenCardViewHolder(inflater.inflate(R.layout.item_screen_result_card, parent, false), onRejectScreen)
             VIEW_TYPE_THINKING       -> ThinkingViewHolder(inflater.inflate(R.layout.item_message_thinking, parent, false))
+            VIEW_TYPE_ACTIVITY_TIMELINE -> TimelineViewHolder(inflater.inflate(R.layout.item_message_activity_timeline, parent, false))
+            VIEW_TYPE_STATUS         -> StatusViewHolder(inflater.inflate(R.layout.item_message_status, parent, false))
             else                     -> AiViewHolder(
                 inflater.inflate(R.layout.item_message_ai, parent, false),
                 ::getOrCreateMarkwon,
@@ -112,11 +133,13 @@ class ChatAdapter(
         val message = getItem(position)
         when (holder) {
             is TextViewHolder          -> holder.bind(message)
-            is AiViewHolder            -> holder.bind(message, message.id == streamingMessageId)
+            is AiViewHolder            -> holder.bind(message, message.id == streamingMessageId, isBusy)
             is CanvasCardViewHolder    -> holder.bind(message)
-            is AgentActivityViewHolder -> holder.bind(message.agentTasks)
+            is AgentActivityViewHolder -> holder.bind(message, expandedThinkingIds, ::notifyItemChanged)
             is ScreenCardViewHolder    -> holder.bind(message)
-            is ThinkingViewHolder      -> holder.bind(message, expandedThinkingIds.contains(message.conversationId) /* using convId as unique layout switch since thought is per-chat */)
+            is ThinkingViewHolder      -> holder.bind(message, expandedThinkingIds.contains(message.conversationId))
+            is TimelineViewHolder      -> holder.bind(message, expandedThinkingIds)
+            is StatusViewHolder        -> holder.bind(message)
         }
     }
 
@@ -139,7 +162,7 @@ class ChatAdapter(
         private val btnCopy: View? = itemView.findViewById(R.id.btnCopy)
         private val btnRetry: View? = itemView.findViewById(R.id.btnRetry)
 
-        fun bind(message: ChatMessage, isStreaming: Boolean) {
+        fun bind(message: ChatMessage, isStreaming: Boolean, isGlobalBusy: Boolean) {
             if (message.isLoading && message.content.isEmpty()) {
                 // Typing indicator — just dots, no markdown needed
                 messageText.text = "✴ "
@@ -151,7 +174,7 @@ class ChatAdapter(
                 markwon.setMarkdown(messageText, message.content)
                 cursorView?.visibility = if (isStreaming) View.VISIBLE else View.GONE
                 
-                if (isStreaming) {
+                if (isStreaming || isGlobalBusy) {
                     actionsGroup?.visibility = View.GONE
                 } else {
                     actionsGroup?.visibility = View.VISIBLE
@@ -163,63 +186,53 @@ class ChatAdapter(
     }
 
     /**
-     * Renders the live agent task log — a terminal-style panel distinct from chat bubbles.
-     * Each AgentTask appears on its own line with ✓ / ⟳ / · / ✗ icon.
+     * Renders a persisted agent activity log (e.g. tool call or tool result).
+     * Rendered as a collapsible UI similar to Thinking, but persists in history.
      */
     class AgentActivityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvAgentLog: TextView    = itemView.findViewById(R.id.tvAgentLog)
+        private val llHeader: View = itemView.findViewById(R.id.llActivityHeader)
+        private val tvTitle: TextView = itemView.findViewById(R.id.tvActivityTitle)
+        private val tvContent: TextView = itemView.findViewById(R.id.tvActivityContent)
+        private val ivChevron: ImageView = itemView.findViewById(R.id.ivActivityChevron)
 
-        private val tvAgentStatus: TextView = itemView.findViewById(R.id.tvAgentStatus)
-        private var pulseAnimator: ObjectAnimator? = null
+        fun bind(message: ChatMessage, expandedIds: MutableSet<String>, onChange: (Int) -> Unit) {
+            tvTitle.text = message.agentLogTitle
+            tvContent.text = message.agentLogContent
 
-        fun bind(tasks: List<AgentTask>) {
-            if (tasks.isEmpty()) {
-                tvAgentLog.text = "Starting..."
-                tvAgentStatus.text = "Initializing"
-                return
+            val isExpanded = expandedIds.contains(message.id)
+            tvContent.visibility = if (isExpanded) View.VISIBLE else View.GONE
+            val chevronRot = if (isExpanded) 180f else 0f
+            ivChevron.rotation = chevronRot
+
+            // Pulsating animation for the activity orb
+            itemView.findViewById<View>(R.id.viewActivityOrb)?.let { orb ->
+                val anim = ObjectAnimator.ofFloat(orb, "alpha", 0.3f, 1.0f)
+                anim.duration = 800
+                anim.repeatMode = ValueAnimator.REVERSE
+                anim.repeatCount = ValueAnimator.INFINITE
+                anim.start()
             }
 
-            val activeTask = tasks.lastOrNull { it.status == TaskStatus.ACTIVE }
-            tvAgentStatus.text = if (activeTask != null) "Working" else "Done"
-
-            // Build the log text line by line
-            tvAgentLog.text = tasks.joinToString("\n") { task ->
-                buildString {
-                    // Color coding via unicode trick — kept simple with monospace icons
-                    when (task.status) {
-                        TaskStatus.DONE    -> append("✓  ")
-                        TaskStatus.ACTIVE  -> append("⟳  ")
-                        TaskStatus.ERROR   -> append("✗  ")
-                        TaskStatus.PENDING -> append("·  ")
-                    }
-                    append(task.label)
-                    if (task.detail != null) append(" — ${task.detail}")
+            llHeader.setOnClickListener {
+                if (expandedIds.contains(message.id)) {
+                    expandedIds.remove(message.id)
+                } else {
+                    expandedIds.add(message.id)
                 }
-            }
-
-            // Pulse the "Working" label while an active task is in flight
-            pulseAnimator?.cancel()
-            if (activeTask != null) {
-                pulseAnimator = ObjectAnimator.ofFloat(tvAgentStatus, "alpha", 1f, 0.3f).apply {
-                    duration = 700
-                    repeatCount = ObjectAnimator.INFINITE
-                    repeatMode = ObjectAnimator.REVERSE
-                    start()
-                }
-            } else {
-                tvAgentStatus.alpha = 1f
+                onChange(bindingAdapterPosition)
             }
         }
     }
 
     class CanvasCardViewHolder(
         itemView: View,
-        private val onOpenCanvas: (DesignBrief, String) -> Unit
+        private val onOpenCanvas: (View, DesignBrief, String) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val tvProjectName: TextView = itemView.findViewById(R.id.tvProjectName)
         private val tvScreensList: TextView = itemView.findViewById(R.id.tvScreensList)
         private val tvMoodChip: TextView    = itemView.findViewById(R.id.tvCanvasPrompt)
         private val btnOpen: MaterialButton = itemView.findViewById(R.id.btnOpenCanvas)
+        private val canvasCard: View        = itemView.findViewById(R.id.canvasCard)
 
         fun bind(message: ChatMessage) {
             val brief = message.embeddedBrief
@@ -232,13 +245,13 @@ class ChatAdapter(
 
                 // Show screen count on button
                 val count = brief.plannedScreens.size
-                btnOpen.text = "Open in Canvas →  ($count screens)"
+                btnOpen.text = "Open in Studio →  ($count screens)"
             } else {
                 // Legacy canvas card — no brief embedded
-                tvProjectName.text = "FORGE Canvas"
+                tvProjectName.text = "FORGE Studio"
                 tvScreensList.text = message.content.take(80)
                 tvMoodChip.text    = "custom"
-                btnOpen.text       = "Open in Canvas →"
+                btnOpen.text       = "Open in Studio →"
             }
 
             btnOpen.setOnClickListener {
@@ -251,7 +264,7 @@ class ChatAdapter(
                     plannedScreens = listOf("Main Screen"),
                     rawPrompt      = message.content
                 )
-                onOpenCanvas(fallbackBrief, fallbackBrief.rawPrompt)
+                onOpenCanvas(canvasCard, fallbackBrief, fallbackBrief.rawPrompt)
             }
         }
     }
@@ -260,14 +273,35 @@ class ChatAdapter(
      * Screen result card — shown inline in chat when FORGE generates a screen.
      * Loads screenshotUrl via Glide. Taps open ScreenPreviewActivity (in-app WebView).
      */
-    class ScreenCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ScreenCardViewHolder(
+        itemView: View,
+        private val onRejectScreen: (String) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         private val imgScreenshot: ImageView = itemView.findViewById(R.id.imgScreenshot)
         private val tvScreenName: TextView   = itemView.findViewById(R.id.tvScreenName)
         private val cardRoot: View           = itemView.findViewById(R.id.cardScreen)
         private val btnPreview: TextView     = itemView.findViewById(R.id.btnPreview)
+        private val btnRejectScreen: TextView = itemView.findViewById(R.id.btnRejectScreen)
 
         fun bind(message: ChatMessage) {
             tvScreenName.text = message.content  // content = screen name
+            
+            if (message.isRejected) {
+                cardRoot.alpha = 0.5f
+                btnRejectScreen.text = "Rejected"
+                btnRejectScreen.textSize = 10f
+                btnRejectScreen.isEnabled = false
+                btnRejectScreen.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                btnRejectScreen.setPadding(12, 0, 12, 0)
+            } else {
+                cardRoot.alpha = 1.0f
+                btnRejectScreen.text = "✖"
+                btnRejectScreen.textSize = 18f
+                btnRejectScreen.isEnabled = true
+                btnRejectScreen.layoutParams.width = itemView.context.resources.displayMetrics.density.toInt() * 36
+                btnRejectScreen.setPadding(0, 0, 0, 0)
+                btnRejectScreen.setOnClickListener { onRejectScreen(message.id) }
+            }
 
             var url = message.screenshotUrl
             if (!url.isNullOrBlank()) {
@@ -283,12 +317,15 @@ class ChatAdapter(
                 
                 Glide.with(itemView.context)
                     .load(url)
-                    .placeholder(R.drawable.bg_screen_badge)
+                    .placeholder(R.drawable.bg_image_placeholder)
                     .transition(DrawableTransitionOptions.withCrossFade(300))
                     .into(imgScreenshot)
             } else {
-                imgScreenshot.setImageResource(R.drawable.bg_screen_badge)
+                imgScreenshot.setImageResource(R.drawable.bg_image_placeholder)
             }
+
+            val transitionName = "canvas_transition_${message.id}"
+            androidx.core.view.ViewCompat.setTransitionName(imgScreenshot, transitionName)
 
             val openPreview = View.OnClickListener {
                 val ctx = itemView.context
@@ -305,9 +342,25 @@ class ChatAdapter(
                         projectName    = message.content,
                         plannedScreens = listOf(message.content),
                         rawPrompt      = message.content
-                    )
+                    ),
+                    designReasoning = message.designReasoning.map { 
+                        com.forge.vdesign.domain.model.DesignReasoning(
+                            decision = it.decision,
+                            principle = it.principle,
+                            sourceBook = it.sourceBook,
+                            skillId = it.skillId
+                        )
+                    }
                 )
-                com.forge.vdesign.ui.canvas.ScreenPreviewActivity.launch(ctx, screen)
+                
+                val activity = ctx as? android.app.Activity
+                val options = if (activity != null) {
+                    androidx.core.app.ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, imgScreenshot, transitionName
+                    ).toBundle()
+                } else null
+                
+                com.forge.vdesign.ui.canvas.ScreenPreviewActivity.launch(ctx, screen, "", options)
             }
             cardRoot.setOnClickListener(openPreview)
             btnPreview.setOnClickListener(openPreview)
@@ -326,6 +379,15 @@ class ChatAdapter(
             tvContent.visibility = if (isExpanded) View.VISIBLE else View.GONE
             ivChevron.rotation = if (isExpanded) 180f else 0f
 
+            // Pulsating animation for the thinking orb
+            itemView.findViewById<View>(R.id.viewThinkingOrb)?.let { orb ->
+                val anim = ObjectAnimator.ofFloat(orb, "alpha", 0.3f, 1.0f)
+                anim.duration = 1000
+                anim.repeatMode = ValueAnimator.REVERSE
+                anim.repeatCount = ValueAnimator.INFINITE
+                anim.start()
+            }
+
             llHeader.setOnClickListener {
                 val adapter = bindingAdapter as? ChatAdapter ?: return@setOnClickListener
                 val expanded = adapter.expandedThinkingIds.contains(message.conversationId)
@@ -336,6 +398,75 @@ class ChatAdapter(
                 }
                 adapter.notifyItemChanged(bindingAdapterPosition)
             }
+        }
+    }
+
+    class TimelineViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val llHeader: View = itemView.findViewById(R.id.llTimelineHeader)
+        private val ivChevron: ImageView = itemView.findViewById(R.id.ivTimelineChevron)
+        private val llStepsContainer: LinearLayout = itemView.findViewById(R.id.llStepsContainer)
+
+        fun bind(message: ChatMessage, expandedIds: MutableSet<String>) {
+            val isExpanded = expandedIds.contains(message.id)
+            ivChevron.rotation = if (isExpanded) 180f else 0f
+            llStepsContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
+
+            llStepsContainer.removeAllViews()
+            val inflater = LayoutInflater.from(itemView.context)
+
+            message.agentTasks.forEachIndexed { index, task ->
+                val stepView = inflater.inflate(R.layout.item_timeline_step, llStepsContainer, false)
+                val tvTitle: TextView = stepView.findViewById(R.id.tvStepTitle)
+                val tvContent: TextView = stepView.findViewById(R.id.tvStepContent)
+                val viewLine: View = stepView.findViewById(R.id.viewTimelineLine)
+                val orb: View = stepView.findViewById(R.id.viewStepOrb)
+
+                tvTitle.text = task.label
+                tvContent.text = task.detail ?: ""
+                tvContent.visibility = if (task.detail.isNullOrEmpty()) View.GONE else View.VISIBLE
+                
+                // Hide line for the last item
+                viewLine.visibility = if (index == message.agentTasks.size - 1) View.GONE else View.VISIBLE
+
+                // Animate orb if it's the latest (and agent is busy)
+                if (index == message.agentTasks.size - 1) {
+                    val anim = ObjectAnimator.ofFloat(orb, "alpha", 0.4f, 1.0f)
+                    anim.duration = 800
+                    anim.repeatMode = ValueAnimator.REVERSE
+                    anim.repeatCount = ValueAnimator.INFINITE
+                    anim.start()
+                } else {
+                    orb.alpha = 0.5f // Dim previous steps
+                }
+
+                llStepsContainer.addView(stepView)
+            }
+
+            llHeader.setOnClickListener {
+                if (expandedIds.contains(message.id)) {
+                    expandedIds.remove(message.id)
+                } else {
+                    expandedIds.add(message.id)
+                }
+                (bindingAdapter as? ChatAdapter)?.notifyItemChanged(bindingAdapterPosition)
+            }
+        }
+    }
+
+    class StatusViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvStatusText: TextView = itemView.findViewById(R.id.tvStatusText)
+        private val ivStatusSpinner: ImageView = itemView.findViewById(R.id.ivStatusSpinner)
+
+        fun bind(message: ChatMessage) {
+            tvStatusText.text = message.content
+
+            // Rotation animation for the refresh icon
+            val anim = ObjectAnimator.ofFloat(ivStatusSpinner, "rotation", 0f, 360f)
+            anim.duration = 1000
+            anim.repeatMode = ValueAnimator.RESTART
+            anim.repeatCount = ValueAnimator.INFINITE
+            anim.interpolator = android.view.animation.LinearInterpolator()
+            anim.start()
         }
     }
 

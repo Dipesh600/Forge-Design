@@ -128,23 +128,28 @@ Respond with ONLY a single valid JSON object:
 {
   "clarificationNeeded": boolean,
   "clarificationQuestion": "string | null",
-  "brief": {
-    "screenType": "login|signup|onboarding|home|dashboard|profile|settings|list|detail|search|checkout|custom",
-    "userGoal": "1-sentence distilled goal",
-    "constraints": ["array of requirements"],
-    "mood": "minimal|expressive|structured|vibrant",
-    "projectName": "Short branded project name (2-3 words)",
-    "plannedScreens": ["Screen Name 1", "Screen Name 2", ...]
+    "brief": {
+      "screenType": "login|signup|onboarding|home|dashboard|profile|settings|list|detail|search|checkout|custom",
+      "userGoal": "1-sentence distilled goal",
+      "constraints": ["array of requirements"],
+      "mood": "minimal|expressive|structured|vibrant",
+      "projectName": "Short branded project name (2-3 words)",
+      "plannedScreens": ["Screen Name 1", "Screen Name 2", ...],
+      "primaryColorHex": "#HEX_CODE or null if unspecified",
+      "fontFamily": "Inter|Roboto|Outfit or null",
+      "isDarkMode": boolean
+    }
   }
-}
 
-Rules:
-- clarificationNeeded=true ONLY if you genuinely cannot determine even the app category
-- If you can infer the category, set clarificationNeeded=false and produce the full brief
-- plannedScreens: list 3-5 key screens for the app (e.g. ["Login", "Home", "Profile", "Settings"])
-- projectName: make it branded and memorable (e.g. "PulseFit", "LunaBank", "ShopFlow")
-- clarificationQuestion: ask ONE focused question about the most important missing piece
-        """.trimIndent()
+  Rules:
+  - clarificationNeeded=true ONLY if you genuinely cannot determine even the app category
+  - If you can infer the category, set clarificationNeeded=false and produce the full brief
+  - plannedScreens: list 3-5 key screens for the app (e.g. ["Login", "Home", "Profile", "Settings"])
+  - projectName: make it branded and memorable (e.g. "PulseFit", "LunaBank", "ShopFlow")
+  - primaryColorHex: infer a suitable primary color based on mood/category if not specified
+  - isDarkMode: default to false unless explicitly asked or implied by "dark" or "night"
+  - clarificationQuestion: ask ONE focused question about the most important missing piece
+          """.trimIndent()
 
         val history = conversationHistory.takeLast(6) // last 3 turns
         val messages = mutableListOf(MiniMaxMessage("system", systemPrompt))
@@ -189,6 +194,9 @@ Rules:
                         projectName    = b?.projectName ?: "FORGE Project",
                         plannedScreens = b?.plannedScreens?.takeIf { it.isNotEmpty() }
                             ?: listOf("Home", "Profile", "Settings"),
+                        primaryColorHex = b?.primaryColorHex,
+                        fontFamily     = b?.fontFamily,
+                        isDarkMode     = b?.isDarkMode ?: false,
                         rawPrompt      = conversationHistory.lastOrNull()?.second ?: ""
                     ),
                     isReadyToGenerate = true
@@ -205,6 +213,9 @@ Rules:
                     mood           = "minimal",
                     projectName    = "FORGE Project",
                     plannedScreens = listOf("Home", "Dashboard", "Profile"),
+                    primaryColorHex = null,
+                    fontFamily     = null,
+                    isDarkMode     = false,
                     rawPrompt      = conversationHistory.lastOrNull()?.second ?: ""
                 ),
                 isReadyToGenerate = true
@@ -247,6 +258,9 @@ Rules:
         val constraints: List<String>?,
         val mood: String?,
         val projectName: String?,
-        val plannedScreens: List<String>?
+        val plannedScreens: List<String>?,
+        val primaryColorHex: String?,
+        val fontFamily: String?,
+        val isDarkMode: Boolean?
     )
 }

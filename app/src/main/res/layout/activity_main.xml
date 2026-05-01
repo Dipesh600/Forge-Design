@@ -23,141 +23,276 @@
         <LinearLayout
             android:id="@+id/chatTopBar"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="64dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingHorizontal="4dp"
-            android:background="@color/forge_surface_elevated"
+            android:paddingHorizontal="8dp"
+            android:background="@drawable/bg_top_bar"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <ImageButton
                 android:id="@+id/btnMenu"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_menu"
                 android:contentDescription="Open Menu"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
                 app:tint="@color/forge_on_surface" />
 
-            <TextView
-                android:id="@+id/tvConversationTitle"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:text="New Chat"
-                android:textColor="@color/forge_on_surface"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:orientation="vertical"
+                android:layout_marginStart="4dp">
+
+                <TextView
+                    android:id="@+id/tvConversationTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Chat"
+                    android:textColor="#FFFFFF"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-black"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
                 
             <!-- Workspace folder icon -->
             <ImageButton
                 android:id="@+id/btnWorkspace"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_folder_workspace"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Open Workspace"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
                 app:tint="@color/forge_on_surface" />
 
             <!-- Three-dot context menu -->
             <ImageButton
                 android:id="@+id/btnChatMenu"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:src="@drawable/ic_three_dot"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Chat options"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
                 app:tint="@color/forge_on_surface" />
 
         </LinearLayout>
 
-        <!-- Empty State (Claude style) -->
-        <LinearLayout
+        <!-- Hero Empty State (Studio Grade) -->
+        <ScrollView
             android:id="@+id/chatEmptyState"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
             android:visibility="gone"
+            android:background="@drawable/bg_hero_glow"
             app:layout_constraintTop_toBottomOf="@+id/chatTopBar"
             app:layout_constraintBottom_toTopOf="@+id/inputContainer"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clipToPadding="false">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="✦ Hello, Designer"
-                android:textColor="@color/forge_on_surface"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="40dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="How can FORGE help you today?"
-                android:textColor="@color/forge_on_surface_variant"
-                android:textSize="18sp"
-                android:layout_marginBottom="36dp"/>
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_forge_logo_splash"
+                    android:layout_marginTop="60dp"
+                    android:layout_marginBottom="24dp"
+                    android:alpha="0.8" />
 
-            <!-- Chips -->
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
-                <LinearLayout
-                    android:orientation="horizontal"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp">
+                    android:text="Hello, Designer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="32sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="What shall we build today?"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="48dp"/>
+
+                <!-- Starter Cards Container -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="24dp">
 
                     <TextView
-                        android:id="@+id/chip1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📱 SaaS Dashboard"
-                        android:background="@drawable/bg_chip"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="10dp"
-                        android:textColor="@color/forge_on_surface"
-                        android:layout_marginEnd="12dp"
-                        android:clickable="true"
-                        android:focusable="true"/>
-                    
-                    <TextView
-                        android:id="@+id/chip2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🛍️ E-commerce Product"
-                        android:background="@drawable/bg_chip"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="10dp"
-                        android:textColor="@color/forge_on_surface"
-                        android:layout_marginEnd="12dp"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                        android:text="DESIGN STARTERS"
+                        android:textColor="#6B6B8A"
+                        android:textSize="11sp"
+                        android:fontFamily="sans-serif-black"
+                        android:letterSpacing="0.15"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginStart="4dp" />
 
-                    <TextView
-                        android:id="@+id/chip3"
-                        android:layout_width="wrap_content"
+                    <!-- Card 1: E-commerce -->
+                    <LinearLayout
+                        android:id="@+id/card1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🏋️ Fitness Tracker"
-                        android:background="@drawable/bg_chip"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="10dp"
-                        android:textColor="@color/forge_on_surface"
+                        android:orientation="horizontal"
+                        android:background="@drawable/selector_starter_card"
+                        android:padding="20dp"
+                        android:layout_marginBottom="16dp"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:elevation="4dp">
+                        
+                        <TextView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:text="🛍️"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_starter_icon_container" />
+                        
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="20dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="E-commerce Kit"
+                                android:textColor="#FFFFFF"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-black" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Multi-vendor marketplace with cart and checkout"
+                                android:textColor="#A0A0B5"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Card 2: Portfolio -->
+                    <LinearLayout
+                        android:id="@+id/card2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/selector_starter_card"
+                        android:padding="20dp"
+                        android:layout_marginBottom="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:elevation="4dp">
+                        
+                        <TextView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:text="🏢"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_starter_icon_container" />
+                        
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="20dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Portfolio Studio"
+                                android:textColor="#FFFFFF"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-black" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Minimalist dark-themed designer showcase"
+                                android:textColor="#A0A0B5"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Card 3: Foodie -->
+                    <LinearLayout
+                        android:id="@+id/card3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/selector_starter_card"
+                        android:padding="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:elevation="4dp">
+                        
+                        <TextView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:text="🌯"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_starter_icon_container" />
+                        
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="20dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Foodie App"
+                                android:textColor="#FFFFFF"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-black" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="High-conversion delivery service UI"
+                                android:textColor="#A0A0B5"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <!-- Message list -->
         <androidx.recyclerview.widget.RecyclerView
@@ -166,23 +301,135 @@
             android:layout_height="0dp"
             android:clipToPadding="false"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:paddingBottom="48dp"
             android:paddingHorizontal="12dp"
             app:layout_constraintTop_toBottomOf="@+id/chatTopBar"
-            app:layout_constraintBottom_toTopOf="@+id/inputContainer"
+            app:layout_constraintBottom_toTopOf="@+id/toolApprovalContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Input bar -->
+
+        <!-- Tool Approval Banner -->
+        <!-- Tool Approval Banner -->
+        <!-- Floating Tool Approval Card (Studio Grade) -->
+        <FrameLayout
+            android:id="@+id/toolApprovalContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/inputContainer">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_glass_card"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_security"
+                        app:tint="#A294F9" />
+
+                    <TextView
+                        android:id="@+id/tvToolApprovalTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Action Required"
+                        android:textColor="#A294F9"
+                        android:textSize="11sp"
+                        android:fontFamily="sans-serif-black"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.15" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvToolApprovalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#E8E8F0"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:lineSpacingExtra="4dp"
+                    tools:text="Agent wants to run 'generate_screen'" />
+
+                <LinearLayout
+                    android:id="@+id/buttonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginTop="20dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRejectTool"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Reject"
+                        android:textColor="#FF5252"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:textAllCaps="false"
+                        android:paddingHorizontal="12dp"
+                        app:rippleColor="#20FF5252" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAllowAllTool"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:text="Always Allow"
+                        android:textColor="#4CAF50"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:textAllCaps="false"
+                        android:paddingHorizontal="12dp"
+                        app:rippleColor="#204CAF50" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAllowTool"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="12dp"
+                        android:text="Allow Action"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-black"
+                        android:textAllCaps="false"
+                        android:paddingHorizontal="20dp"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="#7B6AF7" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Floating Input bar -->
         <LinearLayout
             android:id="@+id/inputContainer"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/forge_surface_container"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_input_floating"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:elevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -196,20 +443,36 @@
                 android:hint="Tell FORGE what to design..."
                 android:inputType="textMultiLine"
                 android:maxLines="4"
-                android:padding="12dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
                 android:textColor="@color/forge_on_surface"
-                android:textColorHint="@color/forge_on_surface_variant"
+                android:textColorHint="#6B6B8A"
                 android:textSize="15sp" />
 
-            <ImageButton
-                android:id="@+id/sendButton"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="bottom"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Send"
-                android:src="@android:drawable/ic_menu_send"
-                app:tint="@color/forge_primary" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp">
+                
+                <ImageButton
+                    android:id="@+id/sendButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Send"
+                    android:src="@android:drawable/ic_menu_send"
+                    app:tint="@color/forge_primary" />
+                    
+                <ImageButton
+                    android:id="@+id/btnStopGeneration"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Stop"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="gone"
+                    app:tint="#FF5252" />
+            </FrameLayout>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -227,27 +490,55 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="⬡ FORGE"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:textColor="@color/forge_primary" />
+                android:text="FORGE"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.05"
+                android:textColor="#FFFFFF" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI DESIGN STUDIO"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.15"
+                android:textColor="@color/forge_primary"
+                android:alpha="0.9" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNewChatDrawer"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="32dp"
+                android:text="New Project"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black"
+                android:textAllCaps="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                android:background="@drawable/bg_button_premium"
+                app:backgroundTint="@null" />
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:background="@color/forge_on_surface_variant"
-            android:alpha="0.2" />
+            android:alpha="0.1" />
 
         <!-- Conversations List -->
         <androidx.recyclerview.widget.RecyclerView
@@ -259,9 +550,9 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp" />
 
-        <!-- Profile / Sign Out Bottom Bar -->
+        <!-- Profile / Command Center Bottom Row -->
         <LinearLayout
-            android:id="@+id/btnSignOutDrawer"
+            android:id="@+id/layoutProfileEntry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -269,21 +560,60 @@
             android:background="?attr/selectableItemBackground"
             android:padding="16dp">
             
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="#FF4D4D" />
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp">
                 
-            <TextView
-                android:id="@+id/tvUserDisplayName"
-                android:layout_width="wrap_content"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_glow_circle"
+                    android:alpha="0.5" />
+                    
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgUserAvatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_forge_logo_splash"
+                    android:padding="6dp"
+                    android:background="#1AFFFFFF"
+                    app:shapeAppearanceOverlay="@style/CircleImageView"
+                    android:backgroundTint="@null" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Sign Out"
-                android:textColor="#FF4D4D"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+                
+                <TextView
+                    android:id="@+id/tvUserDisplayName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Designer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-black" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Command Center"
+                    android:textColor="@color/forge_primary"
+                    android:textSize="10sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="0.05" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_variants"
+                android:rotation="90"
+                app:tint="#3A3A4A" />
         </LinearLayout>
 
     </LinearLayout>

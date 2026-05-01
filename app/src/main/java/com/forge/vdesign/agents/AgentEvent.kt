@@ -24,7 +24,7 @@ sealed class AgentEvent {
      * Small one-line status update — not a full bubble.
      * Used for: "Creating project...", "Generating Home screen...", "Project ready ✓"
      */
-    data class StatusLine(val text: String) : AgentEvent()
+    data class StatusLine(val text: String?) : AgentEvent()
 
     /**
      * A screen was successfully generated.
@@ -34,7 +34,21 @@ sealed class AgentEvent {
         val screenName: String,
         val screenshotUrl: String?,
         val htmlUrl: String?,
-        val projectId: String?
+        val projectId: String?,
+        val designReasoning: Map<String, String>? = null
+    ) : AgentEvent()
+
+    /** Emitted when the agent defines the global project rules. */
+    data class DesignSystemDefined(val markdownStr: String) : AgentEvent()
+
+    /** Emits a persistent timeline entry (e.g. tool execution log) */
+    data class AgentActivityLog(val title: String, val content: String) : AgentEvent()
+
+    /** Requires the user to allow or reject a high-impact tool call. */
+    data class ToolApprovalNeeded(
+        val toolName: String,
+        val arguments: Map<String, Any?>,
+        val onDecision: (Boolean) -> Unit
     ) : AgentEvent()
 
     /**

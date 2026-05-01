@@ -18,5 +18,11 @@ data class ConversationEntity(
     @ColumnInfo(name = "user_id", defaultValue = "")
     val userId: String = "",
     @ColumnInfo(name = "project_manifest", defaultValue = "{}")
-    val projectManifest: String = "{}"
+    val projectManifest: String = "{}",
+    @ColumnInfo(name = "design_system", defaultValue = "")
+    val designSystem: String = "",
+    @ColumnInfo(name = "screen_count", defaultValue = "0")
+    val screenCount: Int = 0,
+    @ColumnInfo(name = "thumbnail_url")
+    val thumbnailUrl: String? = null
 )

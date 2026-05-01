@@ -65,6 +65,12 @@ class SkillAssetLoader @Inject constructor(
             for (i in 0 until arr.length()) sourceBooks.add(arr.getString(i))
         }
 
+        // Parse keywords — used by SkillRouter for smarter text-based routing
+        val keywords = mutableListOf<String>()
+        obj.optJSONArray("keywords")?.let { arr ->
+            for (i in 0 until arr.length()) keywords.add(arr.getString(i))
+        }
+
         val rules = mutableListOf<SkillRule>()
         obj.optJSONArray("rules")?.let { arr ->
             for (i in 0 until arr.length()) {
@@ -73,7 +79,11 @@ class SkillAssetLoader @Inject constructor(
                     SkillRule(
                         id     = ruleObj.optString("id"),
                         rule   = ruleObj.optString("rule"),
-                        weight = ruleObj.optDouble("weight", 1.0).toFloat()
+                        weight = ruleObj.optDouble("weight", 1.0).toFloat(),
+                        why    = ruleObj.optString("why", ""),
+                        check  = ruleObj.optString("check", ""),
+                        bad    = ruleObj.optString("bad", ""),
+                        good   = ruleObj.optString("good", "")
                     )
                 )
             }
@@ -84,6 +94,7 @@ class SkillAssetLoader @Inject constructor(
             name        = obj.optString("name"),
             version     = obj.optString("version", "1.0"),
             category    = obj.optString("category"),
+            keywords    = keywords,
             sourceBooks = sourceBooks,
             rules       = rules,
             embedding   = emptyList() // Asset skills use keyword routing, not embeddings

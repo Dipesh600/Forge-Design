@@ -49,6 +49,9 @@ class ScreenCanvasActivity : AppCompatActivity() {
         binding = ActivityScreenCanvasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Shared element transition name
+        ViewCompat.setTransitionName(binding.canvasRoot, "canvas_handoff")
+
         setupEdgeToEdge()
         setupToolbar()
         setupRecyclerView()
@@ -88,6 +91,7 @@ class ScreenCanvasActivity : AppCompatActivity() {
 
     private fun setupActions() {
         binding.btnRegenerate.setOnClickListener { viewModel.regenerateActive() }
+        binding.btnExploreVariants.setOnClickListener { viewModel.exploreVariants() }
         // "Open in Stitch" → show first screen in-app full screen
         binding.btnOpenInStitch.setOnClickListener {
             val first = viewModel.screens.value.firstOrNull()

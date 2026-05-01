@@ -25,7 +25,12 @@ data class ChatMessage(
     val isScreenCard: Boolean = false,
     val screenshotUrl: String? = null,
     val htmlUrl: String? = null,
-    val screenCardProjectId: String? = null
+    val screenCardProjectId: String? = null,
+    /** For chain-of-thought timeline: tool calls, results, or standalone thoughts */
+    val isAgentLog: Boolean = false,
+    val agentLogTitle: String = "",
+    val agentLogContent: String = "",
+    val isRejected: Boolean = false
 )
 
 enum class MessageRole(val apiValue: String) {

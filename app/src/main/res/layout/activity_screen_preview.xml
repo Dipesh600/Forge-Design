@@ -18,41 +18,140 @@
         app:titleTextColor="#FFFFFF"
         android:elevation="4dp" />
 
-    <!-- WebView for HTML preview -->
-    <WebView
-        android:id="@+id/previewWebView"
+    <!-- Content area: WebView / Image / Empty — fills remaining space -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+        android:layout_weight="1">
 
-    <!-- Screenshot fallback -->
-    <ImageView
-        android:id="@+id/previewImage"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:contentDescription="Screen preview"
-        android:visibility="gone" />
+        <!-- WebView for HTML preview -->
+        <WebView
+            android:id="@+id/previewWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
-    <!-- Empty state -->
-    <TextView
-        android:id="@+id/previewEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="No preview available"
-        android:textColor="#5A5A6A"
-        android:visibility="gone" />
+        <!-- Screenshot fallback -->
+        <ImageView
+            android:id="@+id/previewImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:contentDescription="Screen preview"
+            android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnOpenInteractive"
+        <!-- Empty state -->
+        <TextView
+            android:id="@+id/previewEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No preview available"
+            android:textColor="#5A5A6A"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Bottom Action Bar — clean, no overlap -->
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Open Interactive Html"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:background="#13131A"
+        android:elevation="12dp">
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1E1E2E" />
+
+        <!-- Toggle row: HTML ↔ Screenshot -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenInteractive"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Switch to Screenshot"
+            android:textSize="13sp"
+            android:visibility="gone"
+            style="?attr/materialButtonOutlinedStyle"
+            app:strokeColor="#2A2A3A"
+            android:textColor="#B0B0CC" />
+
+        <!-- Primary actions row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Design Reasoning -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewReasoning"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="Reasoning"
+                android:textSize="12sp"
+                style="?attr/materialButtonOutlinedStyle"
+                app:strokeColor="#3A3A5A"
+                android:textColor="#9090BB"
+                app:icon="@android:drawable/ic_dialog_info"
+                app:iconSize="16dp"
+                app:iconTint="#9090BB"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp" />
+
+            <!-- Design System -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewSystem"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="Design System"
+                android:textSize="12sp"
+                style="?attr/materialButtonOutlinedStyle"
+                app:strokeColor="#3A3A5A"
+                android:textColor="#9090BB"
+                app:icon="@android:drawable/ic_menu_preferences"
+                app:iconSize="16dp"
+                app:iconTint="#9090BB"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp" />
+
+            <!-- Share / Export -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShareScreen"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                style="?attr/materialButtonOutlinedStyle"
+                app:strokeColor="#3A3A5A"
+                app:icon="@android:drawable/ic_menu_share"
+                app:iconSize="18dp"
+                app:iconTint="#9090BB"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

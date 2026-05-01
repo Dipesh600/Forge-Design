@@ -4,15 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#13131A"
-    android:paddingBottom="24dp">
+    android:background="@drawable/bg_glass_bottom_sheet"
+    android:paddingBottom="32dp">
 
     <!-- Handle pill -->
     <View
         android:id="@+id/bottomSheetHandle"
-        android:layout_width="40dp"
+        android:layout_width="36dp"
         android:layout_height="4dp"
-        android:background="#3A3A50"
+        android:background="#40FFFFFF"
         android:layout_marginTop="12dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,45 +25,49 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="8dp"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
         app:layout_constraintTop_toBottomOf="@id/bottomSheetHandle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/ic_folder_workspace"
-            app:tint="#7C6AF7"/>
+            android:padding="2dp"
+            app:tint="#A294F9"/>
 
         <TextView
             android:id="@+id/tvWorkspaceTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:text="Project Workspace"
-            android:textColor="#E8E8F0"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textColor="#FFFFFF"
+            android:textSize="19sp"
+            android:fontFamily="sans-serif-black"/>
 
         <TextView
             android:id="@+id/tvScreenCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 screens"
-            android:textColor="#6B6B8A"
-            android:textSize="13sp"/>
+            android:textColor="#80FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"/>
     </LinearLayout>
 
     <View
         android:id="@+id/workspaceDivider"
         android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="#3A3A50"
-        android:layout_marginHorizontal="20dp"
+        android:layout_height="1dp"
+        android:background="#1AFFFFFF"
+        android:layout_marginHorizontal="24dp"
         app:layout_constraintTop_toBottomOf="@id/workspaceHeader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -72,7 +76,7 @@
     <LinearLayout
         android:id="@+id/workspaceEmpty"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="240dp"
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone"
@@ -83,24 +87,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🖼️"
-            android:textSize="36sp"
-            android:layout_marginBottom="12dp"/>
+            android:text="✨"
+            android:textSize="42sp"
+            android:layout_marginBottom="16dp"
+            android:alpha="0.8"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No screens generated yet"
-            android:textColor="#6B6B8A"
-            android:textSize="15sp"/>
+            android:text="No screens yet"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-bold"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ask FORGE to design your screens"
-            android:textColor="#4A4A60"
+            android:text="Your design canvas is waiting to be filled."
+            android:textColor="#80FFFFFF"
             android:textSize="13sp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="6dp"
+            android:paddingHorizontal="40dp"
+            android:gravity="center"/>
     </LinearLayout>
 
     <!-- Screen grid -->
@@ -108,8 +116,8 @@
         android:id="@+id/rvWorkspaceScreens"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="12dp"
-        android:paddingTop="12dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/workspaceDivider"
         app:layout_constraintStart_toStartOf="parent"

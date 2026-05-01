@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/dialogEditText"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_input_floating"
+        android:paddingHorizontal="16dp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        android:hint="Enter name..."
+        android:textColorHint="#60FFFFFF"
+        android:singleLine="true"
+        android:elevation="4dp" />
+</LinearLayout>

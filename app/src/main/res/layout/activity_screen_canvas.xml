@@ -175,10 +175,20 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Regenerate"
                     android:textColor="#7C4DFF"
                     app:strokeColor="#7C4DFF" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExploreVariants"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Variants"
+                    android:textColor="#FF4081"
+                    app:strokeColor="#FF4081" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnOpenInStitch"

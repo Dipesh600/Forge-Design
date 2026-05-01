@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_new_chat"
         android:title="New Chat"
-        android:icon="@android:drawable/ic_input_add" />
+        android:icon="@drawable/ic_add_chat" />
 
     <item
         android:id="@+id/action_rename"
@@ -19,6 +19,6 @@
     <item
         android:id="@+id/action_delete"
         android:title="Delete"
-        android:icon="@android:drawable/ic_menu_delete" />
+        android:icon="@drawable/ic_delete" />
 
 </menu>

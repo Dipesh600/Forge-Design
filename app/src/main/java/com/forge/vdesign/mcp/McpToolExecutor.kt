@@ -33,13 +33,32 @@ class McpToolExecutor @Inject constructor(
         stitchMcpClient.generateScreen(projectId, prompt, deviceType)
     }
 
-    /** Edit existing screen(s) — calls edit_screens */
+    /** Edit existing screen(s) — calls edit_screens, with fallback to generate_screen_from_text */
     suspend fun editScreens(
         projectId: String,
         screenIds: List<String>,
-        editInstruction: String
-    ): McpResult<StitchScreenResult> = executeWithRetry("edit_screens") {
-        stitchMcpClient.editScreens(projectId, screenIds, editInstruction)
+        editInstruction: String,
+        deviceType: String = "MOBILE"
+    ): McpResult<StitchScreenResult> {
+        val result = executeWithRetry("edit_screens") {
+            stitchMcpClient.editScreens(projectId, screenIds, editInstruction)
+        }
+
+        if (result is McpResult.Error && screenIds.isNotEmpty()) {
+            android.util.Log.w(TAG, "edit_screens failed entirely, falling back to generateScreen")
+            val originalScreenResult = executeWithRetry("get_screen_for_fallback") {
+                stitchMcpClient.getScreen(
+                    name = "projects/$projectId/screens/${screenIds.first()}",
+                    projectId = projectId,
+                    screenId = screenIds.first()
+                )
+            }
+            val originalDescription = (originalScreenResult as? McpResult.Success)?.data?.description ?: ""
+            val fallbackPrompt = "Original screen context: $originalDescription\nApply this edit: $editInstruction"
+            return generateScreen(projectId, fallbackPrompt, deviceType)
+        }
+
+        return result
     }
 
     /** List all screens in a project */
@@ -52,6 +71,46 @@ class McpToolExecutor @Inject constructor(
     suspend fun createProject(title: String): McpResult<StitchProjectResult> =
         executeWithRetry("create_project") {
             stitchMcpClient.createProject(title)
+        }
+
+    /** Create a design system */
+    suspend fun createDesignSystem(
+        projectId: String,
+        designSystem: Map<String, Any>
+    ): McpResult<StitchDesignSystemResult> = executeWithRetry("create_design_system") {
+        stitchMcpClient.createDesignSystem(projectId, designSystem)
+    }
+
+    /** Apply a design system */
+    suspend fun applyDesignSystem(
+        projectId: String,
+        screenIds: List<String>,
+        assetId: String
+    ): McpResult<StitchScreenResult> = executeWithRetry("apply_design_system") {
+        stitchMcpClient.applyDesignSystem(projectId, screenIds, assetId)
+    }
+
+    /** Generate variants */
+    suspend fun generateVariants(
+        projectId: String,
+        screenIds: List<String>,
+        prompt: String,
+        variantOptions: Map<String, Any>,
+        deviceType: String = "MOBILE"
+    ): McpResult<StitchScreenResult> = executeWithRetry("generate_variants") {
+        stitchMcpClient.generateVariants(projectId, screenIds, prompt, variantOptions, deviceType)
+    }
+
+    /** List projects */
+    suspend fun listProjects(filter: String? = null): McpResult<List<StitchProjectResult>> =
+        executeWithRetry("list_projects") {
+            stitchMcpClient.listProjects(filter)
+        }
+
+    /** Get screen metadata */
+    suspend fun getScreen(projectId: String, screenId: String): McpResult<StitchScreenResult> =
+        executeWithRetry("get_screen") {
+            stitchMcpClient.getScreen("projects/$projectId/screens/$screenId", projectId, screenId)
         }
 
     // ── Retry wrapper ─────────────────────────────────────────────────────────

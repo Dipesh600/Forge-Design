@@ -1,0 +1,187 @@
+{
+  "id": "microcopy-v1",
+  "name": "Microcopy",
+  "version": "3.0",
+  "category": "microcopy",
+  "description": "Governs all decisions regarding UI text, labels, buttons, error messages, empty states, onboarding, and conversational tone. Use this skill whenever the user asks about what words to use, UX writing, label design, plain language, accessibility in text, button labels, error messaging, placeholders, or when evaluating the clarity and tone of an interface. Trigger for any review task involving text content or instructional copy.",
+  "keywords": [
+    "text",
+    "label",
+    "copy",
+    "message",
+    "button",
+    "error",
+    "placeholder",
+    "title"
+  ],
+  "sourceBooks": [
+    "Microcopy: The Complete Guide",
+    "Strategic Writing for UX",
+    "Plain Language Guidelines"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "microcopy-v1-r1",
+      "rule": "Label action buttons with a strong verb followed by the object of the action.",
+      "weight": 1.0,
+      "why": "This explicit structure provides a clear \"scent of information,\" telling the user exactly what the button does without requiring surrounding context.",
+      "check": "Can the user understand what happens when they click the button by reading *only* the button text?",
+      "bad": "A button that says \"Submit\" or \"Continue\".",
+      "good": "A button that says \"Save Changes\" or \"Create Account\"."
+    },
+    {
+      "id": "microcopy-v1-r2",
+      "rule": "Make the descriptive text itself the link, rather than using generic instructional phrases.",
+      "weight": 0.97,
+      "why": "\"Click here\" provides no context for screen readers, forces users to read surrounding text to understand the link, and assumes a mouse interaction (excluding touch users).",
+      "check": "Does the link text accurately describe the destination on its own?",
+      "bad": "\"To view our pricing plans, [click here].\"",
+      "good": "\"View our [pricing plans].\""
+    },
+    {
+      "id": "microcopy-v1-r3",
+      "rule": "When a screen has no data, use this formula: Describe the current state, explain why it's empty, and provide a clear call to action to populate it.",
+      "weight": 0.95,
+      "why": "Empty states are the prime opportunity to onboard a user. Without guidance, the user hits a dead end.",
+      "check": "Does the empty state explicitly tell the user what they need to do next?",
+      "bad": "\"No documents found.\"",
+      "good": "\"You haven't uploaded any documents yet. Upload a PDF to start analyzing your data.\""
+    },
+    {
+      "id": "microcopy-v1-r4",
+      "rule": "When an error occurs, state what happened, explain why it happened (if useful to the user), and state exactly what to do next.",
+      "weight": 0.92,
+      "why": "Errors are stressful. The user needs a clear path to recovery, not just an acknowledgment of failure.",
+      "check": "Does the message provide a direct, actionable solution to the problem?",
+      "bad": "\"Authentication error. Code 403.\"",
+      "good": "\"We couldn't sign you in because your password has expired. Please click 'Reset Password' to create a new one.\""
+    },
+    {
+      "id": "microcopy-v1-r5",
+      "rule": "Remove accusatory words (\"You failed,\" \"Invalid,\" \"Wrong\") from error messages. Frame the issue as the system's inability to understand, not the user's failure to comply.",
+      "weight": 0.89,
+      "why": "Accusatory language triggers a defensive emotional response, worsening the user's frustration (designing for the stress case).",
+      "check": "Does the error message imply that the user made a mistake?",
+      "bad": "\"You entered an invalid email address format.\"",
+      "good": "\"We don't recognize that email format. Please use the format name@example.com.\""
+    },
+    {
+      "id": "microcopy-v1-r6",
+      "rule": "Show instructional copy only at the moment the user needs it to complete the immediate task.",
+      "weight": 0.87,
+      "why": "Presenting a wall of instructions upfront overwhelms working memory; users will skip it and immediately get stuck.",
+      "check": "Can this instructional text be hidden until the user actually interacts with the relevant feature?",
+      "bad": "A modal on first login with 5 paragraphs explaining how to use every feature in the dashboard.",
+      "good": "A single tooltip pointing to the \"Create Project\" button on first login, with further instructions appearing only inside"
+    },
+    {
+      "id": "microcopy-v1-r7",
+      "rule": "The primary button in a confirmation dialog must explicitly state the destructive action, never just \"Yes\" or \"OK\".",
+      "weight": 0.84,
+      "why": "Users often blindly click confirmation buttons without reading the dialog text (habituation). The button itself must carry the risk.",
+      "check": "If the user didn't read the dialog title or body, would they still know what they are confirming?",
+      "bad": "Title: \"Delete account?\" Button: \"Yes\".",
+      "good": "Title: \"Delete account?\" Button: \"Delete Account\"."
+    },
+    {
+      "id": "microcopy-v1-r8",
+      "rule": "Placeholders (inside input fields) must be used strictly for hints or examples, never as a replacement for the input's permanent label.",
+      "weight": 0.81,
+      "why": "Placeholders disappear as soon as the user starts typing, forcing them to delete their input to remember what the field was for.",
+      "check": "If the input field contains text, can the user still see the label indicating what the field is?",
+      "bad": "An input field with no external label, relying on the placeholder text \"Phone Number\" inside the box.",
+      "good": "A permanent label \"Phone Number\" above the input field, with the placeholder text \"(555) 123-4567\" inside the box."
+    },
+    {
+      "id": "microcopy-v1-r9",
+      "rule": "For operations taking noticeable time, tell users what the system is currently doing and, if possible, set an expectation for how long it will take.",
+      "weight": 0.79,
+      "why": "Ambiguity during waiting periods breeds anxiety. Clear communication reassures the user that the system hasn't crashed.",
+      "check": "Does the loading copy explain the specific action currently being processed?",
+      "bad": "\"Loading...\"",
+      "good": "\"Generating your report. This usually takes about 30 seconds.\""
+    },
+    {
+      "id": "microcopy-v1-r10",
+      "rule": "After a successful action, confirm exactly what was accomplished AND what will (or should) happen next.",
+      "weight": 0.76,
+      "why": "Users need to know that their goal was met, but they also need guidance on where to direct their attention next to continue their workflow.",
+      "check": "Does the success message transition the user to the next logical step?",
+      "bad": "\"Success!\"",
+      "good": "\"Your profile has been updated. Return to the dashboard to see your changes.\""
+    },
+    {
+      "id": "microcopy-v1-r11",
+      "rule": "Structure sentences so the subject performs the action (Active), rather than the action being performed upon the subject (Passive).",
+      "weight": 0.74,
+      "why": "Active voice is more direct, easier to parse, and typically requires fewer words, reducing cognitive load.",
+      "check": "Is the \"actor\" of the sentence explicitly stated before the verb?",
+      "bad": "\"Your application has been received by our team.\" (Passive)",
+      "good": "\"Our team received your application.\" (Active)"
+    },
+    {
+      "id": "microcopy-v1-r12",
+      "rule": "Adjust the enthusiasm, formality, and directness of the copy based on the user's likely emotional state at that moment in the journey.",
+      "weight": 0.71,
+      "why": "A celebratory tone is great for completing a milestone, but deeply annoying when applied to a payment failure.",
+      "check": "Does the tone of this message match how the user feels right now?",
+      "bad": "\"Oopsie! Looks like your payment completely failed! Try again!\" (Inappropriate celebratory/casual tone for a stressful e",
+      "good": "\"We couldn't process your payment. Please check your card details and try again.\" (Direct, helpful, neutral)."
+    },
+    {
+      "id": "microcopy-v1-r13",
+      "rule": "Avoid language that assumes a specific physical ability, sensory capability, or input device.",
+      "weight": 0.68,
+      "why": "Directing users to \"see the red text\" or \"listen to the chime\" excludes users with visual or auditory impairments.",
+      "check": "Does the instruction make sense regardless of how the user is perceiving the interface?",
+      "bad": "\"Click the red button below to continue.\"",
+      "good": "\"Select the 'Continue' button to proceed.\""
+    },
+    {
+      "id": "microcopy-v1-r14",
+      "rule": "Use gender-neutral terms unless referring to a specific person whose pronouns are known.",
+      "weight": 0.66,
+      "why": "Unnecessary gendered language can alienate users and make interfaces feel outdated or exclusionary.",
+      "check": "Could this copy be rewritten to avoid gendered pronouns without losing clarity?",
+      "bad": "\"A good manager always supports his team.\"",
+      "good": "\"A good manager always supports their team.\""
+    },
+    {
+      "id": "microcopy-v1-r15",
+      "rule": "When providing instructions, state the goal first, then the action required to achieve it.",
+      "weight": 0.63,
+      "why": "Users scan for their goal. If the action comes first, they may stop reading before realizing the action applies to what they want to do.",
+      "check": "Is the outcome mentioned before the required action?",
+      "bad": "\"Click on 'Settings' and then navigate to 'Security' to change your password.\"",
+      "good": "\"To change your password, go to Settings > Security.\""
+    },
+    {
+      "id": "microcopy-v1-r16",
+      "rule": "Do not use ALL CAPS to emphasize words; use bolding instead. Reserve ALL CAPS strictly for acronyms.",
+      "weight": 0.6,
+      "why": "ALL CAPS is visually harder to read because the letters form a uniform block without ascenders or descenders, and it visually implies shouting.",
+      "check": "Is capitalization being used to denote importance rather than an acronym?",
+      "bad": "\"You MUST save your work before exiting.\"",
+      "good": "\"You **must** save your work before exiting.\""
+    },
+    {
+      "id": "microcopy-v1-r17",
+      "rule": "Translate database terms, API jargon, and internal company phrasing into the user's vocabulary.",
+      "weight": 0.58,
+      "why": "Exposing the system's implementation details forces the user to learn your architecture to use your product.",
+      "check": "Would an average user use this term in everyday conversation?",
+      "bad": "\"Query returned 0 results. Check your parameter syntax.\"",
+      "good": "\"We couldn't find any matches for your search. Try using different keywords.\""
+    },
+    {
+      "id": "microcopy-v1-r18",
+      "rule": "Limit sentences to one primary idea. Break complex sentences into shorter ones or use bulleted lists.",
+      "weight": 0.55,
+      "why": "Long sentences increase cognitive load and hurt scannability. Short sentences are easier to translate and faster to read.",
+      "check": "Can this sentence be broken into two distinct sentences?",
+      "bad": "\"If you want to upgrade your plan, you must first ensure that your billing information is up to date and then navigate t",
+      "good": "\"To upgrade your plan, first update your billing information. Then, select a new tier in the subscription panel.\"  ## An"
+    }
+  ]
+}

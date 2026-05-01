@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_glass_card"
+    android:padding="24dp"
+    android:layout_margin="20dp">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dialog Title"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-black"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/dialogMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dialog message goes here."
+        android:textColor="#B0B0CC"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="24dp" />
+
+    <FrameLayout
+        android:id="@+id/customViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNegative"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Cancel"
+            android:textColor="#80FFFFFF"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-bold"
+            android:textAllCaps="false"
+            android:paddingHorizontal="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPositive"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:text="Confirm"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-black"
+            android:textAllCaps="false"
+            android:paddingHorizontal="24dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#7B6AF7" />
+    </LinearLayout>
+</LinearLayout>

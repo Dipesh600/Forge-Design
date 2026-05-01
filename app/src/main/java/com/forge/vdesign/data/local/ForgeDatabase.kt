@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [MessageEntity::class, ConversationEntity::class],
-    version = 5,
+    version = 7,
     exportSchema = true
 )
 abstract class ForgeDatabase : RoomDatabase() {
@@ -40,6 +40,21 @@ abstract class ForgeDatabase : RoomDatabase() {
         val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE conversations ADD COLUMN project_manifest TEXT NOT NULL DEFAULT '{}'")
+            }
+        }
+
+        /** v5 → v6: Add `design_system` column for global UI rules payload. */
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE conversations ADD COLUMN design_system TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        /** v6 → v7: Add `screen_count` and `thumbnail_url` for visual project gallery. */
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE conversations ADD COLUMN screen_count INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE conversations ADD COLUMN thumbnail_url TEXT")
             }
         }
     }

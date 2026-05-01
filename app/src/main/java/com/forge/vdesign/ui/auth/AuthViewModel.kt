@@ -31,6 +31,9 @@ class AuthViewModel @Inject constructor(
     val isAlreadySignedIn: Boolean
         get() = authRepository.currentUser != null
 
+    val currentUser: FirebaseUser?
+        get() = authRepository.currentUser
+
     fun signInWithEmail(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
             _uiState.value = AuthUiState.Error("Email and password cannot be empty.")
@@ -74,5 +77,10 @@ class AuthViewModel @Inject constructor(
 
     fun resetState() {
         _uiState.value = AuthUiState.Idle
+    }
+
+    fun signOut() {
+        authRepository.signOut()
+        _uiState.value = AuthUiState.Idle // Reset to idle so the UI can redirect
     }
 }

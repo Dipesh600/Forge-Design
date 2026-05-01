@@ -19,7 +19,7 @@
             android:name=".ui.auth.AuthActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Forge">
+            android:theme="@style/Theme.Forge.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,6 +42,12 @@
         <!-- FORGE Screen Preview — in-app full screen WebView viewer -->
         <activity
             android:name=".ui.canvas.ScreenPreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Forge" />
+
+        <!-- Designer Command Center — Brand Kits & Agent Archetypes -->
+        <activity
+            android:name=".ui.profile.ProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.Forge" />
     </application>

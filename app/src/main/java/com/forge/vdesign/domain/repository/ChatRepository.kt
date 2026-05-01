@@ -67,10 +67,31 @@ interface ChatRepository {
         screenName: String,
         screenshotUrl: String?,
         htmlUrl: String?,
-        projectId: String?
+        projectId: String?,
+        designReasoning: Map<String, String>? = null
+    ): ForgeResult<ChatMessage>
+
+    suspend fun updateDesignSystem(conversationId: String, designSystem: String): ForgeResult<Unit>
+
+    /** Mark a screen card as rejected, hiding it from the workspace. */
+    suspend fun rejectScreenCard(messageId: String): ForgeResult<Unit>
+
+    /**
+     * Persists an agent activity log (e.g. tool call, tool result) for the Chain of Thought timeline.
+     */
+    suspend fun insertAgentLog(
+        conversationId: String,
+        title: String,
+        content: String
     ): ForgeResult<ChatMessage>
 
     suspend fun renameConversation(conversationId: String, newTitle: String): ForgeResult<Unit>
 
     suspend fun starConversation(conversationId: String, starred: Boolean): ForgeResult<Unit>
+    
+    /** 
+     * Retroactively syncs project metadata (screen count, thumbnail) 
+     * by scanning historical messages. 
+     */
+    suspend fun syncProjectMetadata(conversationId: String): ForgeResult<Unit>
 }

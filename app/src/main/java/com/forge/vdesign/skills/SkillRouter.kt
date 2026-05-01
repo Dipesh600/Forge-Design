@@ -124,6 +124,113 @@ class SkillRouter @Inject constructor(
         return score.coerceAtMost(1.0f)
     }
 
+    /**
+     * Lightweight entry point for ForgeAgent — routes skills from a raw user message string,
+     * without needing a full DesignBrief. Used at the start of the ReAct loop so skills can
+     * be injected into the system prompt before any LLM call.
+     *
+     * Uses each skill's own keyword list (from SKILL.md metadata) for matching.
+     * Universal design skills (android, color, spatial) always get a baseline score.
+     */
+    suspend fun routeSkillsFromText(text: String, limit: Int = 4): List<Skill> {
+        val allSkills = skillRepository.getAllSkills()
+        if (allSkills.isEmpty()) return emptyList()
+
+        val lower = text.lowercase()
+
+        val scored = allSkills.map { skill ->
+            var score = 0f
+
+            // Score based on skill's own keyword list — each SKILL.md defines its own relevance criteria
+            val keywordMatches = skill.keywords.count { lower.contains(it) }
+            score += keywordMatches * 0.25f
+
+            // Universal foundational skills always get a baseline — every screen needs these
+            if (skill.category in listOf("android", "color", "spatial", "hierarchy")) {
+                score += 0.5f
+            }
+
+            // Boost if category name itself appears in the request
+            if (lower.contains(skill.category)) score += 0.3f
+
+            skill to score.coerceAtMost(1.5f)
+        }
+
+        val result = scored
+            .sortedByDescending { it.second }
+            .take(limit)
+            .map { it.first }
+
+        android.util.Log.d("SkillRouter", "routeSkillsFromText → ${result.map { "${it.name}(${it.rules.size}r)" }}")
+        return result
+    }
+
+    /**
+     * Formats a list of routed skills into a structured system prompt block —
+     * exactly how Antigravity reads SKILL.md files: full rule anatomy with
+     * concrete bad/good examples for high-priority rules, compact bullets for the rest.
+     *
+     * The Bad/Good example pair is the most important element — it's what forces
+     * the LLM to apply a rule concretely rather than just "knowing" it abstractly.
+     */
+    fun formatSkillsForSystemPrompt(skills: List<Skill>): String {
+        if (skills.isEmpty()) return ""
+
+        return buildString {
+            appendLine()
+            appendLine("════════════════════════════════════════════════")
+            appendLine("DESIGN KNOWLEDGE — FORGE SKILL LIBRARY")
+            appendLine("These are your design expertise. Apply them when writing Stitch prompts.")
+            appendLine("════════════════════════════════════════════════")
+
+            for (skill in skills) {
+                if (skill.rules.isEmpty()) continue
+                appendLine()
+                appendLine("▸ ${skill.name.uppercase()} (${skill.sourceBooks.firstOrNull() ?: ""})")
+
+                val sortedRules = skill.rules.sortedByDescending { it.weight }
+
+                // High-weight rules (≥ 0.85): show full anatomy with examples
+                // This is exactly what Antigravity reads — the examples are what make rules stick
+                val highPriority = sortedRules.filter { it.weight >= 0.85f }.take(4)
+                if (highPriority.isNotEmpty()) {
+                    appendLine("  NON-NEGOTIABLE RULES:")
+                    for (rule in highPriority) {
+                        appendLine("  • ${rule.rule}")
+                        if (rule.check.isNotBlank()) appendLine("    CHECK: ${rule.check}")
+                        if (rule.bad.isNotBlank())   appendLine("    ✗ BAD:  ${rule.bad}")
+                        if (rule.good.isNotBlank())  appendLine("    ✓ GOOD: ${rule.good}")
+                    }
+                }
+
+                // Mid-weight rules (0.5–0.84): rule + good example only
+                val midPriority = sortedRules.filter { it.weight in 0.5f..0.84f }.take(3)
+                if (midPriority.isNotEmpty()) {
+                    appendLine("  GUIDELINES:")
+                    for (rule in midPriority) {
+                        appendLine("  • ${rule.rule}")
+                        if (rule.good.isNotBlank()) appendLine("    ✓ ${rule.good}")
+                    }
+                }
+
+                // Low-weight rules: compact bullets only
+                val lowPriority = sortedRules.filter { it.weight < 0.5f }.take(2)
+                if (lowPriority.isNotEmpty()) {
+                    lowPriority.forEach { appendLine("  · ${it.rule}") }
+                }
+            }
+
+            appendLine()
+            appendLine("════════════════════════════════════════════════")
+            appendLine("CITATION REQUIREMENT: In your <think> block before every generate_screen call,")
+            appendLine("write a DESIGN DECISION LOG listing which specific rules above you are applying")
+            appendLine("and how each manifests in your Stitch prompt. Reference the ✓ GOOD examples")
+            appendLine("as concrete targets. This is mandatory — not optional.")
+            appendLine("════════════════════════════════════════════════")
+        }.trimEnd()
+    }
+
+
     private fun buildBriefContext(brief: DesignBrief): String = """
         Designing an Android mobile screen.
         App: ${brief.projectName}

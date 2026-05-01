@@ -94,6 +94,79 @@ class StitchMcpClient @Inject constructor(
             wrapper.screens ?: emptyList()
         }
 
+    /** Create a design system */
+    suspend fun createDesignSystem(
+        projectId: String,
+        designSystem: Map<String, Any>
+    ): StitchDesignSystemResult = withContext(Dispatchers.IO) {
+        val body = mapOf(
+            "tool" to "create_design_system",
+            "projectId" to projectId,
+            "designSystem" to designSystem
+        )
+        val json = post(body)
+        gson.fromJson(json, StitchDesignSystemResult::class.java)
+    }
+
+    /** Apply a design system */
+    suspend fun applyDesignSystem(
+        projectId: String,
+        screenIds: List<String>,
+        assetId: String
+    ): StitchScreenResult = withContext(Dispatchers.IO) {
+        val body = mapOf(
+            "tool" to "apply_design_system",
+            "projectId" to projectId,
+            "selectedScreenInstances" to screenIds,
+            "assetId" to assetId
+        )
+        val json = post(body)
+        gson.fromJson(json, StitchScreenResult::class.java)
+    }
+
+    /** Generate variants */
+    suspend fun generateVariants(
+        projectId: String,
+        screenIds: List<String>,
+        prompt: String,
+        variantOptions: Map<String, Any>,
+        deviceType: String = "MOBILE"
+    ): StitchScreenResult = withContext(Dispatchers.IO) {
+        val body = mapOf(
+            "tool" to "generate_variants",
+            "projectId" to projectId,
+            "selectedScreenIds" to screenIds,
+            "prompt" to prompt,
+            "variantOptions" to variantOptions,
+            "deviceType" to deviceType
+        )
+        val json = post(body)
+        gson.fromJson(json, StitchScreenResult::class.java)
+    }
+
+    /** List projects */
+    suspend fun listProjects(filter: String? = null): List<StitchProjectResult> =
+        withContext(Dispatchers.IO) {
+            val body = mutableMapOf<String, Any?>("tool" to "list_projects")
+            if (filter != null) body["filter"] = filter
+            val json = post(body)
+            val wrapper = gson.fromJson(json, ListProjectsWrapper::class.java)
+            wrapper.projects ?: emptyList()
+        }
+
+    /** Get screen metadata */
+    suspend fun getScreen(name: String, projectId: String, screenId: String): StitchScreenResult =
+        withContext(Dispatchers.IO) {
+            val body = mapOf(
+                "tool" to "get_screen",
+                "name" to name,
+                "projectId" to projectId,
+                "screenId" to screenId
+            )
+            val json = post(body)
+            gson.fromJson(json, StitchScreenResult::class.java)
+        }
+
     // ── HTTP helper ───────────────────────────────────────────────────────────
 
     private fun post(body: Map<String, Any?>): String {
@@ -123,6 +196,7 @@ class StitchMcpClient @Inject constructor(
     }
 
     private data class ListScreensWrapper(val screens: List<StitchScreenResult>? = null)
+    private data class ListProjectsWrapper(val projects: List<StitchProjectResult>? = null)
 }
 
 // ─── Result models ────────────────────────────────────────────────────────────
@@ -145,4 +219,12 @@ data class StitchProjectResult(
     val error: String? = null
 ) {
     val isSuccess: Boolean get() = error == null && projectId != null
+}
+
+data class StitchDesignSystemResult(
+    val assetId: String? = null,
+    val projectId: String? = null,
+    val error: String? = null
+) {
+    val isSuccess: Boolean get() = error == null && assetId != null
 }

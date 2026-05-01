@@ -1,0 +1,159 @@
+{
+  "id": "typography-systems-v1",
+  "name": "Typography Systems",
+  "version": "3.0",
+  "category": "typography",
+  "description": "Governs all decisions regarding fonts, text sizes, line height (leading), line length (measure), paragraph alignment, typeface pairings, typographic hierarchy, and text legibility. Use this skill whenever the user asks about reading experiences, font choices, text layout, WCAG contrast for text, or when evaluating why a page of text looks overwhelming, messy, or hard to read.",
+  "keywords": [
+    "text",
+    "font",
+    "type",
+    "typography",
+    "readable",
+    "heading",
+    "body"
+  ],
+  "sourceBooks": [
+    "The Elements of Typographic Style",
+    "Material Design 3",
+    "WCAG 2.2"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "typography-systems-v1-r1",
+      "rule": "Constrain the length of body text lines to an optimal measure of 45 to 75 characters (including spaces).",
+      "weight": 1.0,
+      "why": "If a line is too long, the eye loses its place when scanning back to the left margin. If it's too short, the eye has to jump too frequently, breaking the reading rhythm.",
+      "check": "Count the characters in a typical line of your body text. Is it between 45 and 75?",
+      "bad": "A paragraph spanning the entire 1200px width of a desktop monitor (150+ characters).",
+      "good": "A blog post article constrained to a maximum width of 680px (approx. 65 characters)."
+    },
+    {
+      "id": "typography-systems-v1-r2",
+      "rule": "Set leading (line height) between 1.3x and 1.6x the font size for body text. Increase leading as the measure (line length) gets longer.",
+      "weight": 0.97,
+      "why": "Wider columns of text require more vertical space between lines to help the eye accurately track back to the beginning of the next line.",
+      "check": "Is the `line-height` of the body text explicitly set to a relative value between `1.3` and `1.6`?",
+      "bad": "`font-size: 16px; line-height: 1;` (Lines are too cramped).",
+      "good": "`font-size: 16px; line-height: 1.5;` for standard body text."
+    },
+    {
+      "id": "typography-systems-v1-r3",
+      "rule": "Use left-aligned (ragged right) text for all paragraphs of body copy. Never use `text-align: justify`.",
+      "weight": 0.94,
+      "why": "Web browsers lack the sophisticated hyphenation and justification engines of print software. Justified web text creates massive, distracting \"rivers\" of white space between words.",
+      "check": "Is the text alignment set to anything other than left-aligned for body copy?",
+      "bad": "A multi-line paragraph block set to `text-align: justify`.",
+      "good": "A multi-line paragraph block set to `text-align: left`."
+    },
+    {
+      "id": "typography-systems-v1-r4",
+      "rule": "Center alignment should be used exclusively for short headings or text blocks of 3 lines or fewer.",
+      "weight": 0.9,
+      "why": "Center-aligned text forces the user's eye to search for the unpredictable starting point of every new line, drastically slowing down reading speed.",
+      "check": "Is there a center-aligned block of text longer than 3 lines?",
+      "bad": "A 6-line product description paragraph centered under an image.",
+      "good": "A 2-line hero heading centered at the top of a landing page."
+    },
+    {
+      "id": "typography-systems-v1-r5",
+      "rule": "Base your typographic hierarchy (heading sizes) on a mathematical modular scale (e.g., Major Third: 1.250, Perfect Fourth: 1.333) rather than arbitrary values.",
+      "weight": 0.87,
+      "why": "A modular scale ensures a harmonious and predictable rhythm between all text elements on the screen.",
+      "check": "Is there a consistent mathematical multiplier between your H3, H2, and H1 sizes?",
+      "bad": "H1: 32px, H2: 28px, H3: 26px (arbitrary sizes with low contrast).",
+      "good": "Base: 16px. H3: 20px, H2: 25px, H1: 31px (using a 1.250 scale)."
+    },
+    {
+      "id": "typography-systems-v1-r6",
+      "rule": "When combining font weights within the same family to create hierarchy, skip at least one weight (e.g., pair Light with Bold, or Regular with Extra Bold).",
+      "weight": 0.84,
+      "why": "Pairing adjacent weights (like Regular and Medium) provides insufficient visual contrast; it looks like a mistake rather than an intentional hierarchy.",
+      "check": "Are the two paired weights noticeably distinct at a quick glance?",
+      "bad": "A card title in `font-weight: 500` and the subtitle in `font-weight: 400`.",
+      "good": "A card title in `font-weight: 700` (Bold) and the subtitle in `font-weight: 400` (Regular)."
+    },
+    {
+      "id": "typography-systems-v1-r7",
+      "rule": "When pairing two different typefaces, ensure they are distinctly different (e.g., a Serif with a Sans-Serif). Never pair two similar typefaces from the same classification.",
+      "weight": 0.81,
+      "why": "Typefaces from the same classification (e.g., Helvetica and Arial) will clash because they are too similar to provide contrast, but too different to look cohesive.",
+      "check": "Could a user easily mistake the two typefaces for being the exact same font?",
+      "bad": "Pairing Open Sans for headings with Roboto for body text.",
+      "good": "Pairing Merriweather (Serif) for headings with Open Sans (Sans-Serif) for body text."
+    },
+    {
+      "id": "typography-systems-v1-r8",
+      "rule": "Use a maximum of two font families per project (one for headings, one for body). One is often enough.",
+      "weight": 0.78,
+      "why": "Loading multiple font families harms page performance and creates visual chaos. A single font family with a variety of weights is usually sufficient for a complete hierarchy.",
+      "check": "Are there 3 or more distinct font families loaded in the UI?",
+      "bad": "A landing page using Oswald for H1s, Playfair for H2s, and Inter for body text.",
+      "good": "A landing page using Inter for all text, relying on size, weight, and color to establish hierarchy."
+    },
+    {
+      "id": "typography-systems-v1-r9",
+      "rule": "When setting text in ALL CAPS, increase the letter-spacing (tracking) by 5% to 10% (e.g., `letter-spacing: 0.05em`).",
+      "weight": 0.74,
+      "why": "Capital letters were designed to sit next to lowercase letters. When placed next to each other, they appear too tightly packed and clump together.",
+      "check": "Does the ALL CAPS text have added letter-spacing?",
+      "bad": "`text-transform: uppercase; letter-spacing: 0;`",
+      "good": "`text-transform: uppercase; letter-spacing: 0.05em;`"
+    },
+    {
+      "id": "typography-systems-v1-r10",
+      "rule": "Restrict ALL CAPS exclusively to short labels, acronyms, or brief headings. Never set paragraphs or multi-line sentences in all-caps.",
+      "weight": 0.71,
+      "why": "Lowercase letters have ascenders and descenders that create unique word shapes, which the brain recognizes instantly. All-caps text forms identical rectangular blocks, forcing the brain to read letter",
+      "check": "Is there a sentence longer than 5 words set entirely in uppercase?",
+      "bad": "A 3-line legal disclaimer written in ALL CAPS.",
+      "good": "A small label \"NEW ARRIVAL\" set in ALL CAPS above a product image."
+    },
+    {
+      "id": "typography-systems-v1-r11",
+      "rule": "As font size increases, relative line height must decrease. Set large headings (H1, H2) to a tighter leading (1.1 to 1.2) than body text.",
+      "weight": 0.68,
+      "why": "At large sizes, standard body leading (1.5) creates massive gaps between lines, breaking the heading apart visually.",
+      "check": "Is the line-height of the H1 tighter than the line-height of the body paragraph?",
+      "bad": "`h1 { font-size: 48px; line-height: 1.5; }` (72px line height creates a huge gap).",
+      "good": "`h1 { font-size: 48px; line-height: 1.1; }` (52px line height keeps the heading cohesive)."
+    },
+    {
+      "id": "typography-systems-v1-r12",
+      "rule": "Body text must maintain a minimum contrast ratio of 4.5:1 against its background. Large text (18pt+ or 14pt+ bold) must maintain a 3.1:1 ratio.",
+      "weight": 0.65,
+      "why": "Low contrast text is completely unreadable for users with visual impairments, older users, or anyone using a low-quality monitor or sitting in bright sunlight.",
+      "check": "Run the text color and background color through a contrast checker. Does it pass AA standards?",
+      "bad": "Light gray text (`#999999`) on a white background (`#FFFFFF`) — Ratio: 2.8:1.",
+      "good": "Dark gray text (`#595959`) on a white background (`#FFFFFF`) — Ratio: 4.6:1."
+    },
+    {
+      "id": "typography-systems-v1-r13",
+      "rule": "A heading must sit visually closer to the paragraph that follows it than the paragraph that precedes it.",
+      "weight": 0.61,
+      "why": "Gestalt law of proximity: elements placed close together are perceived as a group. A heading belongs to the text beneath it.",
+      "check": "Is the `margin-top` of the heading significantly larger than its `margin-bottom`?",
+      "bad": "A heading with 24px margin on top and 24px margin on the bottom.",
+      "good": "A heading with 48px margin on top and 16px margin on the bottom."
+    },
+    {
+      "id": "typography-systems-v1-r14",
+      "rule": "The primary body text size for desktop and mobile screens should be no smaller than 16px.",
+      "weight": 0.58,
+      "why": "Mobile screens are held at roughly the same distance as a book; desktop screens are further away. 16px provides a safe, highly legible baseline for the vast majority of typefaces.",
+      "check": "Is the primary body font size set to less than 16px?",
+      "bad": "A blog post where the main reading text is set to 12px.",
+      "good": "A blog post where the main reading text is set to 18px, with 14px reserved strictly for secondary meta-data (dates, tags"
+    },
+    {
+      "id": "typography-systems-v1-r15",
+      "rule": "When displaying columns of numbers (pricing tables, dashboards, timers), use tabular figures (`font-variant-numeric: tabular-nums`).",
+      "weight": 0.55,
+      "why": "Standard proportional numbers vary in width (a '1' is narrower than an '8'), causing columns of numbers to misalign jaggedly. Tabular figures give every number the exact same width.",
+      "check": "If you stack the number 111 above the number 888, do they align perfectly?",
+      "bad": "A financial data table where the decimal points don't align because the numbers are proportional.",
+      "good": "A financial data table using `tabular-nums` so every digit perfectly aligns vertically.  ## Anti-patterns  ### The Wall "
+    }
+  ]
+}

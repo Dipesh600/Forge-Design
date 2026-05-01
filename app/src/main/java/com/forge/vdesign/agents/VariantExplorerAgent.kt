@@ -70,12 +70,14 @@ class VariantExplorerAgent @Inject constructor(
      * Generate 3 variants for a single screen in parallel.
      *
      * @param brief The design brief (used for context)
+     * @param screenId The ID of the screen to base the variants on
      * @param screenName Which screen to explore (e.g. "Login", "Dashboard")
      * @param baseDescription The Stitch description of the existing screen (for context)
      * @return VariantSet with 3 variants (may have null stitchResult on MCP failure)
      */
     suspend fun exploreVariants(
         brief: DesignBrief,
+        screenId: String,
         screenName: String,
         baseDescription: String?
     ): VariantSet = coroutineScope {
@@ -86,7 +88,7 @@ class VariantExplorerAgent @Inject constructor(
         // Generate all 3 in parallel to minimise wait time
         val variantJobs = VariantPhilosophy.values().map { philosophy ->
             async {
-                generateVariant(brief, screenName, baseDescription, philosophy, projectId)
+                generateVariant(brief, screenId, screenName, baseDescription, philosophy, projectId)
             }
         }
 
@@ -98,6 +100,7 @@ class VariantExplorerAgent @Inject constructor(
 
     private suspend fun generateVariant(
         brief: DesignBrief,
+        screenId: String,
         screenName: String,
         baseDescription: String?,
         philosophy: VariantPhilosophy,
@@ -106,11 +109,16 @@ class VariantExplorerAgent @Inject constructor(
         // 1. Ask MiniMax to synthesise a philosophy-specific Stitch prompt
         val stitchPrompt = synthesiseVariantPrompt(brief, screenName, baseDescription, philosophy)
 
-        // 2. Call Stitch MCP
+        // 2. Call Stitch MCP using generateVariants
         val stitchResult = try {
-            when (val mcpResult = mcpToolExecutor.generateScreen(
+            when (val mcpResult = mcpToolExecutor.generateVariants(
                 projectId  = projectId,
+                screenIds  = listOf(screenId),
                 prompt     = stitchPrompt,
+                variantOptions = mapOf(
+                    "creative_range" to "HIGH",
+                    "aspects" to listOf("layout", "color", "typography")
+                ),
                 deviceType = "MOBILE"
             )) {
                 is McpResult.Success -> mcpResult.data

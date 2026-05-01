@@ -1,0 +1,156 @@
+{
+  "id": "spatial-systems-v1",
+  "name": "Spatial Systems",
+  "version": "3.0",
+  "category": "spatial",
+  "description": "Governs all structural, spatial, and compositional decisions in UI design. Use this skill whenever the user asks about grids, layout, spacing, margins, columns, alignment, responsiveness, white space, structural rhythm, compositional balance, padding, icon sizing, baseline grids, component heights, or predictable measurement systems. Also trigger for any UI review task — layout forms the structural skeleton of all interfaces and must always be evaluated for coherence.",
+  "keywords": [
+    "layout",
+    "spacing",
+    "grid",
+    "padding",
+    "margin",
+    "alignment",
+    "structure"
+  ],
+  "sourceBooks": [
+    "Grid Systems in Graphic Design",
+    "Material Design 3",
+    "8-Point Grid"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "spatial-systems-v1-r1",
+      "rule": "Default to a 12-column grid for digital interfaces due to its superior divisibility (by 2, 3, 4, and 6) compared to 10- or 16-column grids.",
+      "weight": 1.0,
+      "why": "12 columns provide the maximum structural flexibility for spanning different content types (halves, thirds, quarters) without fractional pixels.",
+      "check": "Can the active layout grid be evenly divided into 2, 3, 4, and 6 equal parts?",
+      "bad": "Using a 10-column grid and trying to divide the layout into thirds.",
+      "good": "Using a 12-column grid with a main content area spanning 8 columns and a sidebar spanning 4 columns."
+    },
+    {
+      "id": "spatial-systems-v1-r2",
+      "rule": "Determine the size of the base grid module by first typesetting the primary body text at its optimal measure (45–75 characters).",
+      "weight": 0.97,
+      "why": "The grid must serve the content, not the other way around. The optimal reading width dictates the structural unit.",
+      "check": "Was the column width determined by the ideal line length of the primary text?",
+      "bad": "Choosing an arbitrary 300px column width, forcing the text to wrap at uncomfortable 35-character intervals.",
+      "good": "Typesetting the text to 65 characters, noting it takes up 600px, and using 600px as the foundational spatial unit."
+    },
+    {
+      "id": "spatial-systems-v1-r3",
+      "rule": "Ensure gutter widths are visibly narrower than column widths, typically mapping to the width of 1 to 2 ems of the base typography.",
+      "weight": 0.94,
+      "why": "If gutters are too wide, the columns disconnect and lose their relationship; if too narrow, the text runs together.",
+      "check": "Is the gutter width strictly smaller than the width of a single column, but large enough to clearly separate text blocks?",
+      "bad": "A 100px column separated by a 100px gutter.",
+      "good": "A 60px column separated by a 24px gutter."
+    },
+    {
+      "id": "spatial-systems-v1-r4",
+      "rule": "Treat margins as an active, proportional frame that protects the content from the edge of the screen, ensuring the bottom margin is the largest to anchor the layout visually.",
+      "weight": 0.9,
+      "check": "Are the outer margins of the container distinct from the internal gutters, and is the bottom margin visually anchoring the content?",
+      "bad": "Using 16px padding on all sides of a container, making it look top-heavy due to optical weight.",
+      "good": "Setting a top margin of 48px and a bottom margin of 64px to give the layout optical balance."
+    },
+    {
+      "id": "spatial-systems-v1-r5",
+      "rule": "Lock all text elements, regardless of font size, to a strict vertical baseline grid (typically a multiple of the base line-height).",
+      "weight": 0.87,
+      "why": "A baseline grid creates an invisible, harmonious vertical rhythm that guides the eye smoothly down the page.",
+      "check": "If you draw horizontal lines across the screen at consistent intervals, does the bottom of every text element sit exactly on a line?",
+      "bad": "Text blocks with varying, arbitrary line-heights that drift out of vertical alignment with adjacent columns.",
+      "good": "All text elements snapping to a strict 4px or 8px vertical baseline grid."
+    },
+    {
+      "id": "spatial-systems-v1-r6",
+      "rule": "Size all images and graphical elements to span an exact number of columns, starting and ending precisely on column edges, never inside a gutter.",
+      "weight": 0.84,
+      "check": "Do the left and right edges of every image align perfectly with the defined column tracks?",
+      "bad": "An image that spans 3.5 columns, bleeding arbitrarily into a gutter.",
+      "good": "An image sized to span exactly 4 columns, snapping edge-to-edge."
+    },
+    {
+      "id": "spatial-systems-v1-r7",
+      "rule": "If an element must break the grid for emphasis, it must span multiple columns or break the margin drastically.",
+      "weight": 0.81,
+      "why": "A minor misalignment looks like an error. A massive, intentional violation signals to the user that this element is fundamentally different or important.",
+      "check": "If an element breaks the grid, does it do so aggressively enough to look intentional rather than mistaken?",
+      "bad": "An element shifted 10px outside the grid line.",
+      "good": "A hero image that intentionally breaks the container and bleeds entirely off the edge of the screen."
+    },
+    {
+      "id": "spatial-systems-v1-r8",
+      "rule": "Use a limited set of recurring spatial values (e.g., small, medium, large intervals) consistently throughout the entire interface to separate components.",
+      "weight": 0.78,
+      "check": "Are you using a strict, limited scale of spacing variables rather than bespoke padding for every element?",
+      "bad": "A page with gaps of 12px, 15px, 22px, 28px, and 40px between various elements.",
+      "good": "A strict spacing scale using only 16px, 32px, and 64px intervals."
+    },
+    {
+      "id": "spatial-systems-v1-r9",
+      "rule": "Use empty grid modules to group related elements together by pushing unrelated elements further away.",
+      "weight": 0.74,
+      "why": "Proximity is the strongest visual signal of relationship. White space is the tool that creates proximity.",
+      "check": "Is the white space separating two distinct sections noticeably larger than the white space separating elements within a section?",
+      "bad": "Equal 20px spacing between a headline and its paragraph, AND between that paragraph and the next distinct section.",
+      "good": "16px spacing between a headline and its paragraph, and 64px spacing before the next section begins."
+    },
+    {
+      "id": "spatial-systems-v1-r10",
+      "rule": "When translating a grid to a smaller screen, maintain the proportional relationships (the module) while reducing the number of columns (e.g., 12 to 8 to 4).",
+      "weight": 0.71,
+      "why": "The mathematical harmony of the layout must survive screen resizing; shrinking everything destroys legibility, while maintaining columns on mobile destroys the module.",
+      "check": "On mobile breakpoints, are there fewer columns rather than microscopically thin columns?",
+      "bad": "Squeezing a 12-column grid onto a mobile screen, resulting in 10px wide columns.",
+      "good": "Reflowing a 12-column desktop grid into a 4-column mobile grid."
+    },
+    {
+      "id": "spatial-systems-v1-r11",
+      "rule": "All margins, padding, and layout gaps between elements must be a strict multiple of 8 (8, 16, 24, 32, 40, 48, 64, 80, 96, 128).",
+      "weight": 0.68,
+      "why": "Consistent spacing intervals train the user's eye to recognize structural patterns and hierarchy instantly.",
+      "check": "Are all margin and padding values in the CSS/design file divisible by 8?",
+      "bad": "Using padding values of 10px, 15px, or 20px.",
+      "good": "Standardizing padding values to 8px, 16px, or 24px."
+    },
+    {
+      "id": "spatial-systems-v1-r12",
+      "rule": "The height (and ideally width, when fixed) of all UI components like buttons, inputs, and cards must be a multiple of 8.",
+      "weight": 0.65,
+      "why": "When components have heights like 32px, 40px, or 48px, they stack and align perfectly against each other on the spatial grid without awkward remainders.",
+      "check": "Is the overall height of the button or text input exactly divisible by 8?",
+      "bad": "A primary button with a height of 45px.",
+      "good": "A primary button with a height of 48px (which also satisfies mobile touch target requirements)."
+    },
+    {
+      "id": "spatial-systems-v1-r13",
+      "rule": "Align typography to a 4pt baseline grid by ensuring that the CSS `line-height` value is a multiple of 4 (16, 20, 24, 28, 32).",
+      "weight": 0.61,
+      "why": "Text requires finer vertical control than containers. A strict 8pt scale pushes text too far apart at certain sizes; a 4pt baseline maintains rhythm while allowing optical comfort.",
+      "check": "Is the `line-height` of every text style a multiple of 4?",
+      "bad": "Font size 15px with a line-height of 22px.",
+      "good": "Font size 16px with a line-height of 24px."
+    },
+    {
+      "id": "spatial-systems-v1-r14",
+      "rule": "Place all vector icons inside a square bounding box (frame) whose dimensions are a multiple of 8 (16x16, 24x24, 32x32), regardless of the icon's internal shape.",
+      "weight": 0.58,
+      "why": "Icons vary wildly in internal shape. By standardizing their bounding boxes to the 8pt grid, they will always align perfectly with adjacent text and buttons.",
+      "check": "Is the container frame for the icon sized to a multiple of 8?",
+      "bad": "Exporting a star icon exactly to its edges at 21x19px.",
+      "good": "Placing that star icon inside a transparent 24x24px container frame before exporting or aligning it in code."
+    },
+    {
+      "id": "spatial-systems-v1-r15",
+      "rule": "For extremely tight UI clusters (like an icon sitting next to its immediate text label), use a 4pt spacing interval.",
+      "weight": 0.55,
+      "why": "Sometimes 8pt is too loose to communicate strict grouping. The 4pt half-step provides an acceptable, mathematically sound exception for micro-UI relationships.",
+      "check": "If 8pt spacing feels too wide, did you step down specifically to 4pt rather than an arbitrary number?",
+      "bad": "Adjusting an icon 5px away from its label because 8px looked too far.",
+      "good": "Setting the gap between the icon and text to exactly 4px.  ## Anti-patterns  ### 1. The Arbitrary Margin Spacing values "
+    }
+  ]
+}

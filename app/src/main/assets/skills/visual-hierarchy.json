@@ -1,0 +1,186 @@
+{
+  "id": "visual-hierarchy-v1",
+  "name": "Visual Hierarchy",
+  "version": "3.0",
+  "category": "hierarchy",
+  "description": "Governs all visual hierarchy decisions in UI — size, weight, colour contrast, emphasis, scan paths (F-pattern/Z-pattern), proximity, and grouping. Use this skill whenever the user asks about visual weight, hierarchy, emphasizing elements, de-emphasizing text, whitespace, Gestalt principles like figure/ground, or arranging elements by importance. Also trigger for any UI review task — evaluating what draws the eye is mandatory.",
+  "keywords": [
+    "hierarchy",
+    "emphasis",
+    "priority",
+    "attention",
+    "visual",
+    "weight",
+    "prominence"
+  ],
+  "sourceBooks": [
+    "Thinking with Type",
+    "Gestalt Principles",
+    "Visual Design of the User Interface"
+  ],
+  "embedding": [],
+  "rules": [
+    {
+      "id": "visual-hierarchy-v1-r1",
+      "rule": "Combine font weight and color contrast alongside size to establish hierarchy.",
+      "weight": 1.0,
+      "why": "Relying purely on size requires massive scale jumps to show distinction, which wastes space and creates clumsy proportions.",
+      "check": "Is the primary element distinct from the secondary element even if they were the same size?",
+      "bad": "A page title is 48px, a section title is 36px, and body text is 24px, all using the same regular font weight and black c",
+      "good": "A page title is 32px (bold, black), section title is 20px (semibold, dark gray), and body text is 16px (regular, medium "
+    },
+    {
+      "id": "visual-hierarchy-v1-r2",
+      "rule": "Soften secondary information by reducing its contrast or weight instead of making the primary information larger or bolder.",
+      "weight": 0.97,
+      "why": "When everything shouts, nothing is heard. Lowering the volume on less important elements makes the important ones stand out naturally.",
+      "check": "Did you try making the supporting text lighter before you tried making the main text bolder?",
+      "bad": "Making a heading bold and uppercase just because the body text below it feels too prominent.",
+      "good": "Changing the color of a timestamp to a lighter gray so the primary comment text stands out more."
+    },
+    {
+      "id": "visual-hierarchy-v1-r3",
+      "rule": "Apply heavier font weights (600, 700) to data or labels you want the user to process first.",
+      "weight": 0.95,
+      "why": "Bold text has more visual weight and creates stronger contrast against the background, drawing the eye immediately.",
+      "check": "Does the most critical piece of text in this component have the heaviest font weight?",
+      "bad": "A dashboard stat card where the label \"Total Revenue\" and the number \"$10,000\" both use regular font weight.",
+      "good": "A dashboard stat card where the number \"$10,000\" is bold and the label \"Total Revenue\" is regular and gray."
+    },
+    {
+      "id": "visual-hierarchy-v1-r4",
+      "rule": "Apply lighter colors (e.g., grays on a light background) to reduce the visual weight of tertiary information.",
+      "weight": 0.92,
+      "why": "Lower contrast reduces the element's \"pull\" on the user's attention, pushing it back in the visual hierarchy.",
+      "check": "Are less critical elements (like timestamps or footnotes) lower in contrast than the main content?",
+      "bad": "Body text and less important metadata are both rendered in `#111111` black.",
+      "good": "Body text is `#111111`, while the author name and date are `#666666`."
+    },
+    {
+      "id": "visual-hierarchy-v1-r5",
+      "rule": "Style text based on its visual importance in the UI, not its semantic HTML tag (h1, h2, h3).",
+      "weight": 0.89,
+      "why": "A secondary label might semantically be an `h2`, but visually it might need to look smaller than body text to avoid overwhelming the layout.",
+      "check": "Are you styling this element based on how important it looks rather than its underlying HTML tag?",
+      "bad": "Forcing an `h3` category label to be 24px bold because \"headings should be big\", making it overpower the 18px article ti",
+      "good": "Styling the `h3` category label as 12px uppercase and gray, allowing the article title to dominate."
+    },
+    {
+      "id": "visual-hierarchy-v1-r6",
+      "rule": "Place related elements closer together than unrelated elements.",
+      "weight": 0.87,
+      "why": "Proximity is the strongest visual cue for relationship; the brain assumes things that are close together belong together.",
+      "check": "Is the space between related items demonstrably smaller than the space between unrelated groups?",
+      "bad": "A form label is equidistant from the input field it belongs to and the input field above it.",
+      "good": "A form label is 4px above its input field, and there is 24px of space before the next label."
+    },
+    {
+      "id": "visual-hierarchy-v1-r7",
+      "rule": "Surround high-priority elements with generous whitespace to increase their perceived importance.",
+      "weight": 0.84,
+      "why": "Empty space removes visual competition, allowing the isolated element to become the focal point.",
+      "check": "Does the primary action or message have the most \"breathing room\" in the layout?",
+      "bad": "A primary \"Buy Now\" button is crammed immediately next to a dense paragraph of terms and conditions.",
+      "good": "A pricing tier has ample padding around its price and a distinct \"Sign Up\" button separated by generous whitespace."
+    },
+    {
+      "id": "visual-hierarchy-v1-r8",
+      "rule": "Place critical information along the top and left edges for text-heavy interfaces.",
+      "weight": 0.81,
+      "why": "Users from left-to-right reading cultures naturally scan across the top, then down the left side, looking for keywords.",
+      "check": "Are the most important headers and keywords anchored to the left edge of the content area?",
+      "bad": "Important status indicators are buried in the middle of a dense paragraph on a dashboard.",
+      "good": "A list of articles aligns titles to the left edge, with the most important metadata at the start of the line."
+    },
+    {
+      "id": "visual-hierarchy-v1-r9",
+      "rule": "Place the primary call-to-action at the bottom right of a low-density, image-heavy layout.",
+      "weight": 0.79,
+      "why": "The eye sweeps horizontally across the top, diagonally down to the bottom left, and horizontally across the bottom right.",
+      "check": "Does the scan path terminate at the primary action button?",
+      "bad": "A hero section places the primary call-to-action button in the bottom left, contrary to the natural exit point.",
+      "good": "A landing page hero has the logo top-left, navigation top-right, headline center, and \"Get Started\" button bottom-right."
+    },
+    {
+      "id": "visual-hierarchy-v1-r10",
+      "rule": "Ensure the primary element (figure) is clearly differentiated from its background (ground).",
+      "weight": 0.76,
+      "why": "Ambiguous figure-ground relationships cause perceptual confusion and slow down cognitive processing.",
+      "check": "Can you instantly tell what is the foreground object and what is the background?",
+      "bad": "Placing white text over a complex, light-colored photograph without an overlay.",
+      "good": "Using a semi-transparent dark gradient overlay on an image to ensure white text remains readable and distinct."
+    },
+    {
+      "id": "visual-hierarchy-v1-r11",
+      "rule": "Provide just enough visual information for the user to perceive a complete pattern, reducing visual clutter.",
+      "weight": 0.74,
+      "why": "The human brain prefers to perceive complete shapes; leveraging this allows you to remove unnecessary borders or lines.",
+      "check": "Could you remove a border or line and still have the user understand the grouping?",
+      "bad": "Drawing a heavy box around every single item in a list to separate them.",
+      "good": "Using only whitespace and alignment to separate list items, relying on the user's mind to close the implicit rows."
+    },
+    {
+      "id": "visual-hierarchy-v1-r12",
+      "rule": "Apply consistent visual treatments (color, shape, size) to elements that share the same function or category.",
+      "weight": 0.71,
+      "why": "Elements that look similar are perceived to be part of the same group or have the same behavior.",
+      "check": "Do all elements that perform the same type of action look visually identical?",
+      "bad": "Primary action buttons on different pages have different colors and border radii.",
+      "good": "All destructive actions (Delete, Remove) across the app use the same red text style."
+    },
+    {
+      "id": "visual-hierarchy-v1-r13",
+      "rule": "Align elements linearly to lead the eye smoothly from one point of interest to another.",
+      "weight": 0.68,
+      "why": "Elements arranged in a line or curve are perceived as more related than elements not on the line or curve.",
+      "check": "Do the elements form a continuous visual path that guides the user to the next logical step?",
+      "bad": "A multi-step form where the \"Next\" button jumps between the left and right sides of the screen depending on the step.",
+      "good": "A timeline UI where a continuous vertical line connects chronological events, guiding the eye downward."
+    },
+    {
+      "id": "visual-hierarchy-v1-r14",
+      "rule": "In key-value pairs, emphasize the data and de-emphasize the label.",
+      "weight": 0.66,
+      "why": "Users usually know what the data represents from context; the data itself is the unique, useful information.",
+      "check": "Does the data stand out more than the label describing it?",
+      "bad": "A profile card where \"Email Address:\" is bold and black, and `user@example.com` is regular and gray.",
+      "good": "A profile card where `user@example.com` is dark and regular, and \"Email Address\" is small, uppercase, and light gray."
+    },
+    {
+      "id": "visual-hierarchy-v1-r15",
+      "rule": "Emphasize labels instead of data only when the user is scanning a list of items looking for a specific data point.",
+      "weight": 0.63,
+      "why": "When comparing items (like specs on a pricing page), the user scans for the category first, then reads the data.",
+      "check": "Is the user looking for a specific field across multiple items, rather than reading a single item?",
+      "bad": "On a tech specs comparison table, the feature name (label) is tiny and gray, while the checkmark (data) is huge and bold",
+      "good": "On a tech specs table, the feature name is prominent and dark, helping the user scan down the list to find \"Battery Life"
+    },
+    {
+      "id": "visual-hierarchy-v1-r16",
+      "rule": "When you increase the weight or size of an element (like an icon), reduce its color contrast to maintain balance.",
+      "weight": 0.6,
+      "why": "An element that is both large/heavy AND high-contrast will overpower the layout.",
+      "check": "If an icon is placed next to text, does it steal all the attention from the text?",
+      "bad": "A large, solid-fill icon placed next to a small paragraph, both using full black.",
+      "good": "A large, solid-fill icon in a light, muted blue placed next to a dark gray paragraph, balancing the visual weight."
+    },
+    {
+      "id": "visual-hierarchy-v1-r17",
+      "rule": "Use higher contrast colors for thin elements (borders, thin icons) to ensure they remain visible.",
+      "weight": 0.58,
+      "why": "Thin elements have less surface area, so they inherently carry less visual weight.",
+      "check": "Can you easily see the border or icon at a glance without squinting?",
+      "bad": "A 1px border using a very light `#f3f4f6` gray that washes out on a white background.",
+      "good": "A 1px border using a slightly darker `#e5e7eb` gray, or increasing the border to 2px if it must remain light."
+    },
+    {
+      "id": "visual-hierarchy-v1-r18",
+      "rule": "Ensure every screen has one unambiguous primary element or action that holds the highest visual weight.",
+      "weight": 0.55,
+      "why": "Without a clear focal point, the user must expend cognitive effort figuring out what they are supposed to do or read first.",
+      "check": "If you blur your eyes, is there a single element that stands out above all others?",
+      "bad": "A landing page where the headline, the hero image, and the primary button all share equal visual prominence.",
+      "good": "A landing page where the \"Start Free Trial\" button uses a vibrant, saturated brand color while everything else is neutra"
+    }
+  ]
+}

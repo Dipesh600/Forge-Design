@@ -5,14 +5,21 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.transition.TransitionManager
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.EditText
 import android.widget.ImageButton
+import android.view.LayoutInflater
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.forge.vdesign.ui.chat.GlassDialog
+import com.forge.vdesign.ui.chat.GlassMenu
+import com.forge.vdesign.ui.chat.GlassToast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -87,24 +94,35 @@ class MainActivity : AppCompatActivity() {
         val rvConversations: RecyclerView = findViewById(R.id.rvConversations)
         val inputField: EditText = findViewById(R.id.messageInput)
         val sendBtn: ImageButton = findViewById(R.id.sendButton)
-        val btnSignOutDrawer: View = findViewById(R.id.btnSignOutDrawer)
         val btnWorkspace: ImageButton = findViewById(R.id.btnWorkspace)
         val btnChatMenu: ImageButton = findViewById(R.id.btnChatMenu)
         val chatEmptyState: View = findViewById(R.id.chatEmptyState)
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
+        
+        val toolApprovalContainer: View = findViewById(R.id.toolApprovalContainer)
+        val tvToolApprovalText: TextView = findViewById(R.id.tvToolApprovalText)
+        val btnRejectTool: android.widget.Button = findViewById(R.id.btnRejectTool)
+        val btnAllowTool: android.widget.Button = findViewById(R.id.btnAllowTool)
+        val btnAllowAllTool: android.widget.Button = findViewById(R.id.btnAllowAllTool)
+        val btnStopGeneration: View = findViewById(R.id.btnStopGeneration)
+
+        btnAllowTool.setOnClickListener { chatViewModel.submitToolApproval(true) }
+        btnAllowAllTool.setOnClickListener { chatViewModel.submitToolApprovalAll() }
+        btnRejectTool.setOnClickListener { chatViewModel.submitToolApproval(false) }
+        btnStopGeneration.setOnClickListener { chatViewModel.stopGeneration() }
 
         // Setup Adapters
         setupHistoryAdapter(rvConversations, drawerLayout)
         setupChatAdapter()
 
-        // Prompt chips — tap to pre-fill input and send
-        val chipPrompts = mapOf(
-            R.id.chip1 to "Design a modern SaaS analytics dashboard with charts and KPI cards",
-            R.id.chip2 to "Design a premium e-commerce product detail page with a clean, minimal layout",
-            R.id.chip3 to "Design a fitness tracker home screen with workout stats and progress rings"
+        // Starter Cards — tap to pre-fill input and send
+        val cardPrompts = mapOf(
+            R.id.card1 to "Design an E-commerce Kit: Multi-vendor marketplace with cart and checkout",
+            R.id.card2 to "Design a Portfolio Studio: Minimalist dark-themed designer showcase",
+            R.id.card3 to "Design a Foodie App: High-conversion delivery service UI"
         )
-        chipPrompts.forEach { (id, prompt) ->
-            findViewById<TextView>(id).setOnClickListener {
+        cardPrompts.forEach { (id, prompt) ->
+            findViewById<View>(id).setOnClickListener {
                 inputField.setText(prompt)
                 inputField.setSelection(prompt.length)
                 inputField.requestFocus()
@@ -114,71 +132,61 @@ class MainActivity : AppCompatActivity() {
         // Button Listeners
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
         
+        findViewById<View>(R.id.btnNewChatDrawer).setOnClickListener {
+            chatViewModel.switchConversation(null)
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+        
         btnWorkspace.setOnClickListener {
             val state = chatViewModel.uiState.value
             if (state.conversationId.isEmpty()) {
-                Toast.makeText(this, "Start a chat first.", Toast.LENGTH_SHORT).show()
+                GlassToast.show(this, "Start a chat first.")
                 return@setOnClickListener
             }
-            val screens = state.persistedMessages.filter { it.isScreenCard }
+            val screens = state.persistedMessages.filter { it.isScreenCard && !it.isRejected }
             WorkspaceBottomSheet().apply {
-                // Must show first before calling bind(), or hack a bundle. Actually better to just do it in onViewCreated.
-                // But passing data directly here requires the view to exist. Let's pass via companion object or setter before show?
-                // Calling show() attaches it, but view might not be created synchronously. We can pass via bundle in a real app,
-                // but let's just use a setter that caches the data if view is null! Wait, let's fix the bottom sheet bind to handle it.
-            }.apply {
                 this.pendingScreens = screens
                 this.pendingProjectTitle = state.conversationTitle
+                this.onEditScreenClicked = { screen ->
+                    val screenName = screen.content.ifBlank { "Screen" }
+                    val prompt = "Edit the \"$screenName\" screen: "
+                    inputField.setText(prompt)
+                    inputField.setSelection(prompt.length)
+                    inputField.requestFocus()
+                    
+                    // Show keyboard
+                    val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    imm.showSoftInput(inputField, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+                }
             }.show(supportFragmentManager, WorkspaceBottomSheet.TAG)
         }
 
         btnChatMenu.setOnClickListener { view ->
-            val popup = PopupMenu(this, view)
-            popup.menuInflater.inflate(R.menu.menu_chat_context, popup.menu)
-            
-            // Re-find the active conversation to know its starred state if we want to toggle the title, but wait, DB takes care of that.
             val activeConvoId = chatViewModel.uiState.value.conversationId
             val title = chatViewModel.uiState.value.conversationTitle
-            
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_new_chat -> {
-                        chatViewModel.switchConversation(null)
-                        drawerLayout.closeDrawers()
-                        true
-                    }
-                    R.id.action_rename -> {
-                        if (activeConvoId.isNotEmpty()) showRenameDialog(activeConvoId, title)
-                        true
-                    }
-                    R.id.action_star -> {
-                        if (activeConvoId.isNotEmpty()) {
-                            // We don't have the exact current starred state easily without searching the history list, 
-                            // so we'll just search it from the conversationListViewModel state!
-                            val isCurrentlyStarred = conversationListViewModel.state.value.conversations.find { it.id == activeConvoId }?.isStarred ?: false
-                            conversationListViewModel.starConversation(activeConvoId, !isCurrentlyStarred)
-                            Toast.makeText(this, if (isCurrentlyStarred) "Un-starred" else "Starred", Toast.LENGTH_SHORT).show()
-                        }
-                        true
-                    }
-                    R.id.action_delete -> {
-                        if (activeConvoId.isNotEmpty()) {
-                            android.app.AlertDialog.Builder(this)
-                                .setTitle("Delete Chat?")
-                                .setMessage("This will wipe all messages and generated screens.")
-                                .setPositiveButton("Delete") { _, _ ->
-                                    conversationListViewModel.deleteConversation(activeConvoId)
-                                    chatViewModel.switchConversation(null)
-                                }
-                                .setNegativeButton("Cancel", null)
-                                .show()
-                        }
-                        true
-                    }
-                    else -> false
+            val isStarred = conversationListViewModel.state.value.conversations.find { it.id == activeConvoId }?.isStarred ?: false
+
+            GlassMenu(this)
+                .addItem("New Chat", R.drawable.ic_add_chat) {
+                    chatViewModel.switchConversation(null)
+                    drawerLayout.closeDrawers()
                 }
-            }
-            popup.show()
+                .addItem("Rename", R.drawable.ic_edit) {
+                    if (activeConvoId.isNotEmpty()) showRenameDialog(activeConvoId, title)
+                }
+                .addItem("Delete", R.drawable.ic_delete) {
+                    if (activeConvoId.isNotEmpty()) {
+                        GlassDialog.build()
+                            .setContent("Delete Chat?", "This will wipe all messages and generated screens.")
+                            .setButtons("Delete", "Cancel") {
+                                conversationListViewModel.deleteConversation(activeConvoId)
+                                chatViewModel.switchConversation(null)
+                                GlassToast.show(this, "Project deleted")
+                            }
+                            .show(supportFragmentManager)
+                    }
+                }
+                .show(view)
         }
 
         sendBtn.setOnClickListener {
@@ -189,13 +197,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnSignOutDrawer.setOnClickListener {
-            conversationListViewModel.signOut()
+        // Profile Entry (Bottom of Drawer)
+        findViewById<View>(R.id.layoutProfileEntry).setOnClickListener {
+            com.forge.vdesign.ui.profile.ProfileActivity.launch(this)
+            drawerLayout.closeDrawer(GravityCompat.START)
         }
 
         // Observer loops
         observeConversationList(tvUserDisplayName)
-        observeActiveChat(tvConversationTitle, sendBtn, inputField, chatEmptyState)
+        observeActiveChat(tvConversationTitle, sendBtn, inputField, chatEmptyState, toolApprovalContainer, tvToolApprovalText, btnStopGeneration)
     }
 
     private fun setupHistoryAdapter(rv: RecyclerView, drawerLayout: DrawerLayout) {
@@ -205,17 +215,16 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(GravityCompat.START)
             },
             onDelete = { convo ->
-                android.app.AlertDialog.Builder(this)
-                    .setTitle("Delete conversation?")
-                    .setMessage("\"${convo.title}\" will be permanently deleted.")
-                    .setPositiveButton("Delete") { _, _ ->
+                GlassDialog.build()
+                    .setContent("Delete Project?", "\"${convo.title}\" will be permanently deleted.")
+                    .setButtons("Delete", "Cancel") {
                         conversationListViewModel.deleteConversation(convo.id)
                         if (chatViewModel.uiState.value.conversationId == convo.id) {
                             chatViewModel.switchConversation(null)
                         }
+                        GlassToast.show(this, "Project deleted")
                     }
-                    .setNegativeButton("Cancel", null)
-                    .show()
+                    .show(supportFragmentManager)
             }
         )
         rv.layoutManager = LinearLayoutManager(this)
@@ -224,18 +233,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupChatAdapter() {
         chatAdapter = ChatAdapter(
-            onOpenCanvas = { brief, prompt ->
+            onOpenCanvas = { view, brief, prompt -> 
                 val intent = Intent(this, ScreenCanvasActivity::class.java).apply {
                     putExtra(ScreenCanvasActivity.EXTRA_DESIGN_BRIEF, brief)
                     putExtra(ScreenCanvasActivity.EXTRA_PROMPT, prompt)
                 }
-                startActivity(intent)
+                val options = androidx.core.app.ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this, view, "canvas_handoff"
+                )
+                startActivity(intent, options.toBundle())
             },
             onCopyMessage = { text ->
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("FORGE Response", text)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                GlassToast.show(this, "Copied to clipboard")
             },
             onRetryMessage = { aiMsg ->
                 val allMsgs = chatViewModel.uiState.value.persistedMessages
@@ -247,7 +259,10 @@ class MainActivity : AppCompatActivity() {
                         return@ChatAdapter
                     }
                 }
-                Toast.makeText(this, "No previous prompt to retry.", Toast.LENGTH_SHORT).show()
+                GlassToast.show(this, "No previous prompt to retry.")
+            },
+            onRejectScreen = { messageId ->
+                chatViewModel.rejectScreenCard(messageId)
             }
         )
         chatLayoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
@@ -264,36 +279,54 @@ class MainActivity : AppCompatActivity() {
     private fun observeConversationList(tvUser: TextView) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                conversationListViewModel.state.collect { state ->
-                    if (state.isSignedOut) { goToAuth(); return@collect }
-                    tvUser.text = "Sign out (${state.userDisplayName})"
-                    historyAdapter.submitList(state.conversations)
+                // Observe the list itself
+                launch {
+                    conversationListViewModel.state.collect { state ->
+                        if (state.isSignedOut) { goToAuth(); return@collect }
+                        tvUser.text = state.userDisplayName.ifBlank { "Designer" }
+                        historyAdapter.submitList(state.conversations, chatViewModel.uiState.value.conversationId)
+                    }
+                }
+                // Observe the active ID changes from the chat state
+                launch {
+                    chatViewModel.uiState.collect { chatState ->
+                        historyAdapter.submitList(conversationListViewModel.state.value.conversations, chatState.conversationId)
+                    }
                 }
             }
         }
     }
 
     private fun showRenameDialog(conversationId: String, currentTitle: String) {
-        val input = EditText(this).apply {
+        val dialogLayout = LayoutInflater.from(this).inflate(R.layout.layout_dialog_input, null)
+        val input = dialogLayout.findViewById<EditText>(R.id.dialogEditText).apply {
             setText(currentTitle)
             setSelection(currentTitle.length)
-            setSingleLine()
+            requestFocus()
         }
         
-        android.app.AlertDialog.Builder(this)
-            .setTitle("Rename Chat")
-            .setView(input)
-            .setPositiveButton("Save") { _, _ ->
+        GlassDialog.build()
+            .setContent("Rename Project", "Enter a new name for your workspace.")
+            .setCustomView(dialogLayout)
+            .setButtons("Save", "Cancel") {
                 val newTitle = input.text.toString().trim()
                 if (newTitle.isNotBlank()) {
                     conversationListViewModel.renameConversation(conversationId, newTitle)
+                    GlassToast.show(this, "Project renamed")
                 }
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+            .show(supportFragmentManager)
     }
 
-    private fun observeActiveChat(tvTitle: TextView, sendBtn: ImageButton, input: EditText, emptyState: View) {
+    private fun observeActiveChat(
+        tvTitle: TextView, 
+        sendBtn: ImageButton, 
+        input: EditText, 
+        emptyState: View, 
+        toolApprovalContainer: View, 
+        tvToolApprovalText: TextView, 
+        btnStopGeneration: View
+    ) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 chatViewModel.uiState.collect { state ->
@@ -317,7 +350,7 @@ class MainActivity : AppCompatActivity() {
                             id = "forge_status",
                             conversationId = state.conversationId,
                             role = MessageRole.ASSISTANT,
-                            content = "⟳  ${state.statusLine}",
+                            content = state.statusLine,
                             isLoading = true
                         )
                     }
@@ -343,12 +376,28 @@ class MainActivity : AppCompatActivity() {
                     emptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
                     chatRecyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
 
-                    // Only enable input if not busy loading/streaming
-                    val busy = state.isSending || state.isStreaming
+                    // Only enable input if not busy loading/streaming/approving
+                    val busy = state.isSending || state.isStreaming || state.pendingToolApproval != null
                     sendBtn.isEnabled = !busy
                     sendBtn.alpha = if (busy) 0.4f else 1.0f
                     
-                    chatAdapter.submitList(allMessages, streamingId)
+                    chatAdapter.submitList(allMessages, streamingId, busy)
+
+                    val showApproval = state.pendingToolApproval != null
+                    if (toolApprovalContainer.visibility == View.VISIBLE && !showApproval || 
+                        toolApprovalContainer.visibility == View.GONE && showApproval) {
+                        TransitionManager.beginDelayedTransition(findViewById(R.id.chatRoot))
+                    }
+
+                    if (showApproval) {
+                        toolApprovalContainer.visibility = View.VISIBLE
+                        val toolName = state.pendingToolApproval.toolName
+                        tvToolApprovalText.text = Html.fromHtml("Agent wants to run <b>$toolName</b>", Html.FROM_HTML_MODE_LEGACY)
+                    } else {
+                        toolApprovalContainer.visibility = View.GONE
+                    }
+                    
+                    btnStopGeneration.visibility = if (state.isStreaming || state.isSending) View.VISIBLE else View.GONE
 
                     if (state.error != null) {
                         Toast.makeText(this@MainActivity, state.error, Toast.LENGTH_LONG).show()

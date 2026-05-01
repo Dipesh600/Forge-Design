@@ -65,6 +65,15 @@
     </style>
 
     <style name="Theme.Forge" parent="Base.Theme.Forge" />
+    
+    <!-- ── Splash Screen Theme ──────────────────────────────────────────
+         Uses modern Android SplashScreen API (Core)
+         ──────────────────────────────────────────────────────────────── -->
+    <style name="Theme.Forge.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/forge_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_forge_logo_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Forge</item>
+    </style>
 
     <!-- Shape system -->
     <style name="ShapeAppearance.Forge.Small" parent="ShapeAppearance.Material3.SmallComponent">
@@ -109,4 +118,15 @@
         <item name="chipStrokeWidth">1dp</item>
     </style>
 
+    <style name="TransparentBottomSheetDialog" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/TransparentBottomSheetStyle</item>
+    </style>
+
+    <style name="TransparentBottomSheetStyle" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <style name="CircleImageView" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

@@ -180,10 +180,24 @@ class CanvasViewModel @Inject constructor(
             appendLog(AgentLogEntry("VariantExplorer", "Generating 3 variants for ${screen.screenName}…", com.forge.vdesign.brain.LogStatus.RUNNING))
             val set = variantExplorerAgent.exploreVariants(
                 brief       = brief,
+                screenId    = screen.screenId,
                 screenName  = screen.screenName,
                 baseDescription = screen.description
             )
             _variantSet.value = set
+            val newScreens = _screens.value.toMutableList()
+            newScreens.addAll(set.variants.mapNotNull { v ->
+                val res = v.stitchResult ?: return@mapNotNull null
+                com.forge.vdesign.domain.model.GeneratedScreen(
+                    screenId = res.screenId ?: "",
+                    screenName = v.displayName,
+                    htmlUrl = res.htmlUrl,
+                    screenshotUrl = res.screenshotUrl,
+                    description = v.tradeoffExplanation,
+                    brief = brief
+                )
+            })
+            _screens.value = newScreens
             appendLog(AgentLogEntry("VariantExplorer", "${set.variants.size} variants ready ✓", com.forge.vdesign.brain.LogStatus.DONE))
         }
     }
